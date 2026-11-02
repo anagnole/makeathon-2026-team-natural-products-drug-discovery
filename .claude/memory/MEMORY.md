@@ -2,7 +2,6 @@
 - [Open choices](feedback_open_choices.md): idea, data and stack not decided; the 2 Nov recommendation is only a proposal
 - [Hackathon-sized](feedback_hackathon_sized.md): smallest thing that works, few short files
 - [Keep memory current](feedback_keep_memory_current.md): update CLAUDE.md and memory in the same turn as any decision
-- [Push to main](feedback_push_to_main.md): when asked to push, commit straight to main; no branches or PRs
 - [No self-commit](feedback_no_self_commit.md): never git commit or push on your own; leave changes for the user
 - [Commit message style](feedback_commit_message_style.md): one line, no body, no Claude trailer or PR footer
 - [Prefer simple](feedback_prefer_simple.md): reflexively pick the simplest solution
