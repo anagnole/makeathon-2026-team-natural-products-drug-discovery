@@ -6,9 +6,9 @@ Our entry to EthnoHack 2026 (https://ethnohack2026.devpost.com/), **Track 2: Nat
 
 This folder is the repo: https://github.com/anagnole/makeathon-2026-team-natural-products-drug-discovery (created 2 Nov, **private for now**, MIT, Python `.gitignore`). `team` in the name is a placeholder until the team name is set (`gh repo rename`). It must be made public before submitting. `CLAUDE.md` and the Claude project memory (`.claude/memory/`) are in the repo; `organiser/` holds the organisers' files and stays local (`.git/info/exclude`). The repo goes public, so nothing committed may hold secrets, promo codes or third-party names. Never commit or push unless the user asks.
 
-**Deadline: Sun 8 Nov 2026, 10:00 CET (11:00 Athens).** The opening slides say 10:00 twice; one Discord rules post said 11:00, ignore it. Saving a Devpost draft is not submitting. Judges deliberate for a week, winners are announced Sun 15 Nov.
+**Deadline: Sun 8 Nov 2026, 10:00 CET (11:00 Athens).** The slides and the FAQ say 10:00 CET. The Discord rules post shows "11:00 AM" only because Discord renders timestamps in the reader's time zone (the FAQ line reads "10:00 CET: Sunday, November 8, 2026 at 11:00 AM"), so it is the same moment. Late submissions are refused. Submit early: a submitted project can be edited until the deadline, and saving a Devpost draft is not submitting. Judges deliberate for a week, winners are announced Sun 15 Nov.
 
-Sources: `organiser/opening-ceremony.pdf` (the 2 Nov opening slides, the most authoritative) and the Discord rules and FAQ of 30 Oct, summarised below.
+Sources: `organiser/opening-ceremony.pdf` (the 2 Nov opening slides, the most authoritative) the Discord rules and FAQ of 30 Oct, the #track-2 channel intro, and auto-generated kickoff call notes (garbled in places: they call it the "Fathom Hackathon", list the wrong partners and mix up Track 3, so trust the slides). All summarised below; the verbatim pastes are not on disk.
 
 ## The event
 
@@ -20,7 +20,7 @@ Sources: `organiser/opening-ceremony.pdf` (the 2 Nov opening slides, the most au
 
 ## Track 2
 
-Lead: Antigoni Cheilari. Question: "Among hundreds of thousands of plant compounds, which deserve a closer look?"
+Lead: Antigoni Cheilari. Question: "Among hundreds of thousands of plant compounds, which deserve a closer look?" The #track-2 channel puts it as: identify promising plant-derived compounds for specific disease targets; build predictive models, knowledge graphs and screening pipelines.
 
 ML and cheminformatics to find plant compounds for disease targets. Plant extracts act through compounds with synergistic effects that are hard to isolate, so mapping the chemical space of medicinal plants in silico to predict bioactivity or synergy is the core challenge.
 
@@ -55,6 +55,9 @@ Suggested open data: COCONUT, NPASS, ChEMBL, PubChem, KNApSAcK, UniProt, PDB, Dr
 - Public GitHub repo: code, notebooks and a clear README. MIT licence recommended. Per `organiser/github-guide.txt`: name it `makeathon-2026-[team-name]-[challenge-name]`, add a `.gitignore`, add every member as a collaborator, never commit keys (`.env` ignored, README explains how to get and set each key). README must cover the challenge and problem, technologies, install and run steps, API key setup, and screenshots, demo or video link. It must run from those instructions. Frequent descriptive commits, `dev` and `feature-*` branches, no large files in git.
 - Pitch video, max 10 minutes, on YouTube (public or unlisted) or Vimeo. Cover problem, approach, results, impact, demo.
 - Slide deck, max 10 slides, as PDF.
+- Video tips (FAQ): unlisted is fine, private is not; test the link in an incognito window. One or two presenters is enough. The organisers' video guide describes a 2 to 3 minute demo video shown during the presentation to the judging panel and recommends OBS Studio.
+- Data that can't be shared stays out of the repo; the README says how to get it.
+- If something isn't finished, submit anyway and say what works, what doesn't and what's next. FAQ: "Honest, well-reasoned work beats a shiny but shallow demo."
 
 ## Rules that shape the work
 
@@ -63,17 +66,31 @@ Suggested open data: COCONUT, NPASS, ChEMBL, PubChem, KNApSAcK, UniProt, PDB, Dr
 - AI tools are allowed. The README lists them and what each was used for.
 - No health claims: the prototype is not clinically validated. State uncertainty and limitations.
 - Take care with traditional or Indigenous knowledge.
+- Disclose significant generative AI use, especially where AI contributed code, analysis or content. The team stays responsible for accuracy, originality and licensing.
+- Grounds for disqualification include data or IP used without permission, misleading information and a missing submission item.
+- One team per person. Every member must accept the Devpost invite to appear on the submission. Changing teams is allowed if both teams agree and Devpost is updated.
 
 ## Judging
 
-Scientific relevance, innovation, technical implementation, data science quality, feasibility, impact, presentation (the pitch video).
+From the official rules:
+
+- Scientific relevance: a meaningful challenge in ethnopharmacology, natural products, biodiversity, sustainability or health.
+- Innovation: a creative or novel approach.
+- Technical implementation: code quality, system design, model implementation, prototype functionality, documentation, reproducibility.
+- Data science quality: data quality, method selection, validation, statistical reasoning, handling of uncertainty, reproducibility.
+- Feasibility: could it realistically be developed further after the hackathon.
+- Impact: benefit for research, drug discovery, conservation, healthcare or communities.
+- Presentation: how clearly the problem, methods, results, prototype, limitations and impact come across.
+
+Judges are ethnopharmacology, natural products, data science and digital health experts from the organising institutions and partners. The rubric and any weighting will be published before judging; judges may also consider a final presentation or demo. Every member of a submitting team gets a participation certificate. The kickoff notes say the special awards are certificates (unconfirmed). Submissions appear in the public Devpost gallery, and projects may continue as research or publications afterwards.
 
 ## Help and resources
 
 - Discord: #announcements (read-only: schedule, deadlines, live links), #track-2 (questions, datasets, the track lead), #faq-and-resources, #event-questions (tech, Devpost, rules), #mentor-room or #find-a-mentor, #track-*-find-a-team. Private team channel: in #request-team-channel post `/team [teamname]-track2 @members`.
-- Mentors guide, they don't write code. Post in #mentor-room with team, track and question, and tag the field. Replies within about 12 hours, so ask early. Daily voice office hours, schedule pinned in #announcements. Closest to Track 2: Konstantia Graikou (natural products chemistry), Vasilis Kaintas (pharmacognosy), David Buchmann, Christian Ebeling and Anshulika Saxena (bioinformatics), Vijay Ingalalli (data science).
+- Discord etiquette: real name as server nickname; don't DM mentors unless they invite you.
+- Mentors guide, they don't write code. To find a mentor by field, post in #find-a-mentor with team, track and field (e.g. Cheminformatics); specific questions go in #mentor-room. For a private question, @ the mentor in the team channel. #whois has mentor bios, and the FAQ links a mentor availability sheet (field, time zone, hours, office hours). Replies within about 12 hours, so ask early. Daily voice office hours, schedule pinned in #announcements. Closest to Track 2: Konstantia Graikou (natural products chemistry), Vasilis Kaintas (pharmacognosy), David Buchmann, Christian Ebeling and Anshulika Saxena (bioinformatics), Vijay Ingalalli (data science).
 - Organiser guides: GitHub guide and dataset guide are in `organiser/`. The demo video guide is still only on Google Docs.
-- Free compute: Google Colab, Kaggle Notebooks, GitHub Codespaces.
+- Free compute: Google Colab, Kaggle Notebooks (about 30 GPU hours a week), GitHub Codespaces.
 - Anakin (any website as a structured API): a free month of the $20 plan; the team with the best use of it gets the $100 plan free for a month, then 50% off for 3 months. Claim steps and code: #faq-and-resources, or `organiser/anakin-credit-claim.docx` locally.
 - Aitho (pitch rehearsal, the script follows your voice): Presenter Pro free until 31 Dec. Sign-up link in #faq-and-resources.
 - Organisers: ethnopharmacology@pharm.uoa.gr.

@@ -13,6 +13,7 @@ State as of Mon 2026-11-02, day 1 of the hackathon. The full brief is `~/Project
 - At the user's request (2 Nov) `CLAUDE.md` and this memory are in the repo. The memory lives at `.claude/memory/` in the repo, and `~/.claude/projects/-Users-anagnole-Projects-ethnohack/memory` is a symlink to it, so memory edits land in the repo for the user to commit. Keep them free of secrets, promo codes and third-party names.
 - `organiser/` (opening slides, dataset guide, GitHub guide, Anakin claim doc) stays out of git via `.git/info/exclude`.
 - The user runs several Claude sessions at once; a supervisor session may relay their requests by cross-session message.
+- On 2 Nov the supervisor session sent everything the user gave it: the slides PDF, the Devpost URL, kickoff call notes, the Discord rules and FAQ, and the #track-2 intro. All of it is folded into CLAUDE.md. It knew nothing about the team beyond "we have a team", so team facts must come from the user.
 
 Open points: team name (then `gh repo rename`), teammate's GitHub handle (add as collaborator), teammate's background, the project idea, making the repo public.
 
