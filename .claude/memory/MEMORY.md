@@ -1,0 +1,15 @@
+- [EthnoHack context](ethnohack_context.md): team of two, private repo with placeholder name, CLAUDE.md and memory in the repo, organiser/ local only, open points
+- [Open choices](feedback_open_choices.md): idea, data and stack not decided; the 2 Nov recommendation is only a proposal
+- [Hackathon-sized](feedback_hackathon_sized.md): smallest thing that works, few short files
+- [Keep memory current](feedback_keep_memory_current.md): update CLAUDE.md and memory in the same turn as any decision
+- [No self-commit](feedback_no_self_commit.md): never git commit or push on your own; leave changes for the user
+- [Commit message style](feedback_commit_message_style.md): one line, no body, no Claude trailer or PR footer
+- [Prefer simple](feedback_prefer_simple.md): reflexively pick the simplest solution
+- [One thing at a time](feedback_one_thing_at_a_time.md): build only the scoped item; don't pre-empt pending answers
+- [Shorter precise output](feedback_shorter_precise_output.md): lead with the answer, state file paths, one question at a time
+- [No multiple-choice menus](feedback_no_multiple_choice_menus.md): recommend and proceed instead of AskUserQuestion
+- [Demand proof](feedback_demand_proof.md): separate evidence from hypothesis
+- [Unrun is unfinished](feedback_unrun_is_unfinished.md): not done until executed; name the command and output
+- [Ask before installing](feedback_ask_before_installing.md): show the candidate, wait for a yes
+- [No blockquote drafts](feedback_no_blockquote_drafts.md): drafts as plain text, no `>` markers
+- [No em dash](feedback_no_em_dash.md): never use the em dash character

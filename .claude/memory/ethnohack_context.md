@@ -1,0 +1,20 @@
+---
+name: ethnohack_context
+description: "EthnoHack 2026 state the repo can't hold: team of two, private repo with placeholder name, local-only CLAUDE.md and organiser/, open points"
+metadata:
+  type: project
+---
+
+State as of Mon 2026-11-02, day 1 of the hackathon. The full brief is `~/Projects/ethnohack/CLAUDE.md`; read it first.
+
+- Team of two: the user plus one teammate. Teammate's name, GitHub handle and background not known yet. The user created the Devpost project page.
+- Repo https://github.com/anagnole/makeathon-2026-team-natural-products-drug-discovery, created 2026-11-02 by Claude with `gh` at the user's request (GitHub made the initial commit: README, MIT LICENSE, Python .gitignore). It is **private** because the auto-mode classifier blocked creating a public repo; the user makes it public. `team` is a placeholder for the team name.
+- `~/Projects/ethnohack` is the repo root, so sessions here load this memory folder, not the shared `~/Projects` one. The feedback files here are copies from the shared folder, with other projects' and people's names removed because the repo goes public.
+- At the user's request (2 Nov) `CLAUDE.md` and this memory are in the repo. The memory lives at `.claude/memory/` in the repo, and `~/.claude/projects/-Users-anagnole-Projects-ethnohack/memory` is a symlink to it, so memory edits land in the repo for the user to commit. Keep them free of secrets, promo codes and third-party names.
+- `organiser/` (opening slides, dataset guide, GitHub guide, Anakin claim doc) stays out of git via `.git/info/exclude`.
+- The user runs several Claude sessions at once; a supervisor session may relay their requests by cross-session message.
+
+Open points: team name (then `gh repo rename`), teammate's GitHub handle (add as collaborator), teammate's background, the project idea, making the repo public.
+
+**Why:** a one-week hackathon with a hard deadline (Sun 8 Nov 10:00 CET); losing track of these costs the submission.
+**How to apply:** close open points here as they resolve; don't restate what CLAUDE.md already says. See [[feedback_open_choices]], [[feedback_keep_memory_current]].
