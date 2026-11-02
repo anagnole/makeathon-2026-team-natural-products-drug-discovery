@@ -1,6 +1,26 @@
 # EthnoHack 2026
 
-Our entry to EthnoHack 2026 (https://ethnohack2026.devpost.com/), **Track 2: Natural Products for Drug Discovery**. Team of two: the user and one teammate. The Devpost project page exists (created 2 Nov). The idea and the stack are not chosen yet.
+Our entry to EthnoHack 2026 (https://ethnohack2026.devpost.com/), **Track 2: Natural Products for Drug Discovery**. Team of two: the user and one teammate. The Devpost project page exists (created 2 Nov). The task, models and splits were decided on the 2 Nov team call and are in "The project" below; what is still open is listed at the end of that section.
+
+## The project (decided on the 2 Nov team call)
+
+**Task.** Predict which plant compounds are active against specific bacterial targets. Precision over recall: the deliverable is a short, high-quality shortlist for lab synthesis, so a wasted synthesis is the cost that matters, not a missed hit.
+
+**Targets.** Per-target models for specific bacterial proteins rather than one general model, with proteins grouped by similar mechanism of action so that targets with few samples borrow data from their group.
+
+**Models.** XGBoost or random forest. Optuna for the hyperparameter search, chosen over grid search. Hybrid features: sequence features combined with biophysical and biochemical properties. Score every feature set with a simple model first and tune only the best one. Feature importance for the biological reading.
+
+**Splits.** Cluster by sequence similarity (around 90% identity) and split the clusters, not the rows, into train, validation and test, so the model cannot memorise near-identical sequences.
+
+**Candidate selection.** After training, project candidates into a 3D space and take the most distant ones, for biological diversity in what goes to the lab.
+
+**Compute.** Google Colab Pro for the GPU, with every intermediate saved so nothing is recomputed.
+
+**Roles.** Leonidas: Colab GPU, start the EDA in the repo notebooks, save intermediates. Teammate: accept the repo invite, email the lab coordinator about booking, review the tutorial videos on Discord.
+
+**Data.** "The several datasets provided" in the minutes means the organisers' own dataset list (confirmed by the user on 2 Nov): `organiser/datasets-all-tracks.docx`, with its text copy alongside, plus the suggested sources on the Track 2 slide. There is no separate hand-over of data, and the Discord link for it was never posted. For this task the entries to start from are ChEMBL for measured target activity and UniProt for normalising target identifiers, with the organisers' hosted wrappers available for compound and taxonomy lookups.
+
+Still open: the team name (deferred to the final presentation, so the repo keeps its placeholder). One item in the minutes, "auto 5-mer", is unclear and nobody should guess at it.
 
 ## Repo
 

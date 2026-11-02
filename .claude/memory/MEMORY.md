@@ -1,5 +1,6 @@
 - [EthnoHack context](ethnohack_context.md): team of two, private repo with placeholder name, CLAUDE.md and memory in the repo, organiser/ local only, open points
 - [Teammate](teammate.md): strong computational drug discovery ML background; her own work stays unpublished, detail is local only
+- [Repo conventions](repo_conventions.md): notebooks/pipeline/ledger/figures layout reused from the AVR repo; written fresh, not copied
 - [Open choices](feedback_open_choices.md): idea, data and stack not decided; the 2 Nov recommendation is only a proposal
 - [Hackathon-sized](feedback_hackathon_sized.md): smallest thing that works, few short files
 - [Keep memory current](feedback_keep_memory_current.md): update CLAUDE.md and memory in the same turn as any decision
