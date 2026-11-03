@@ -54,7 +54,7 @@ def to_micromolar(value, units, mol_weight=None):
         return None
     if value <= 0:
         return None
-    key = (units or "").strip().lower()
+    key = units.strip().lower() if isinstance(units, str) else ""
     if key in MOLAR_TO_UM:
         return value * MOLAR_TO_UM[key]
     if key in ODDITIES:
@@ -87,7 +87,7 @@ def binary_label(rows, threshold_um):
     active = False
     inactive = False
     for relation, value in rows:
-        relation = (relation or "=").strip()
+        relation = relation.strip() if isinstance(relation, str) else "="
         if relation in ACTIVE_RELATIONS and value <= threshold_um:
             active = True
         elif relation == "=" and value > threshold_um:
