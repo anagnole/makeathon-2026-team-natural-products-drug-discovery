@@ -22,7 +22,7 @@ from sklearn.metrics import roc_auc_score
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "notebooks"))
 
-from pipeline import features, labels, splits  # noqa: E402
+from pipeline import features, labels, ledger, splits  # noqa: E402
 
 DATA = Path(os.environ.get("ETHNOHACK_DATA_DIR", ROOT / "data"))
 NPASS = DATA / "npass"
@@ -136,6 +136,8 @@ def main():
     parser.add_argument("--organism", default="Staphylococcus aureus")
     parser.add_argument("--threshold", type=float, default=32.0, help="active at or below, in uM")
     parser.add_argument("--repeats", type=int, default=10)
+    parser.add_argument("--note", default="random vs scaffold vs plant-family split")
+    parser.add_argument("--no-ledger", action="store_true", help="skip the results/ ledger entry")
     args = parser.parse_args()
 
     rows = build_dataset(args.data_dir, args.organism, args.threshold)
@@ -191,6 +193,30 @@ def main():
         "the model and still scores lower, so plant family carries difficulty that the chemical "
         "scaffold does not account for."
     )
+
+    if args.no_ledger:
+        return
+    config = {
+        "task": f"{args.organism} MIC",
+        "threshold_um": args.threshold,
+        "label_source": "NPASS 3.0 activities (a copy of ChEMBL), plant families from NPASS",
+        "compounds": "plant-derived, exactly one reported family, deduplicated by InChIKey skeleton",
+        "features": f"Morgan r={features.FINGERPRINT_RADIUS} bits={features.FINGERPRINT_BITS}",
+        "model": "RandomForestClassifier(500, min_samples_leaf=2, class_weight=balanced)",
+        "repeats": args.repeats,
+        "test_fraction": 0.2,
+    }
+    metrics = {"n_compounds": n, "positive_rate": positives / n}
+    for name in ("random", "scaffold", "family"):
+        if results[name]:
+            metrics[f"auroc_{name}"] = statistics.mean(results[name])
+            metrics[f"auroc_{name}_sd"] = statistics.pstdev(results[name])
+            metrics[f"seen_scaffolds_{name}"] = statistics.mean(seen[name])
+    if paired:
+        metrics["family_minus_scaffold"] = statistics.mean(paired)
+        metrics["family_worse_repeats"] = sum(1 for d in paired if d < 0)
+    entry = ledger.record("split_comparison", config, metrics, note=args.note)
+    print(f"\nledger entry {entry['id']} (config {entry['config_hash']})")
 
 
 if __name__ == "__main__":

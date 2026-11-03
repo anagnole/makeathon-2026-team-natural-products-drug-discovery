@@ -7,7 +7,9 @@ behind it is named so you can check it rather than argue about it.
 
 Written 3 November, after a day spent measuring NPASS and ChEMBL rather than planning on top of
 them. It is deliberately written to be read alongside `notebooks/01_data.ipynb` from PR #2, which
-reached the same conclusions from different data.
+reached the same conclusions from different data. It follows `docs/conventions.md`: the code sits in
+`notebooks/pipeline/`, the data is downloaded rather than committed, and the evaluation writes its
+own ledger entry.
 
 ## The problem, in one paragraph
 
@@ -202,7 +204,9 @@ Code, so this is a proposal that runs rather than a document that asserts:
 - `notebooks/pipeline/splits.py`: random, scaffold and family splits, plus `seen_group_fraction`,
   the diagnostic that makes the family result interpretable.
 - `scripts/fetch_npass.py`: resumable download of the five NPASS files. No data committed.
-- `scripts/run_split_comparison.py`: reproduces the table above end to end.
+- `scripts/run_split_comparison.py`: reproduces the table above end to end, and appends to
+  `results/LEDGER.md` through `pipeline.ledger`, so every number above is traceable to a commit
+  and a config hash as `docs/conventions.md` requires.
 - `tests/`: 12 tests, mostly on the labelling, because that is where a silent mistake would cost
   us the most.
 
