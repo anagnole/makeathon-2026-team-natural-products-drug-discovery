@@ -12,7 +12,9 @@ re-verified the numbers independently; they come from notebook 01 and `docs/data
 (99.6%) are measured against the whole organism. Only 35 single-protein targets carry any MIC at
 all, median 8 compounds, 150 on the best one. The 2 Nov call chose per-target protein models; the
 MIC data cannot support that. Protein-level data does exist in ChEMBL under IC50, Ki and percent
-inhibition, as a separate and much smaller download. **The user ruled on 3 Nov: whole-organism.** The primary model predicts whole-organism growth
+inhibition, as a separate and much smaller download. **Settled on 4 Nov: whole-organism.** Leonidas ruled it in his own session on 3 Nov and Eleni
+confirmed it on 4 Nov, so `CLAUDE.md` now carries it as a decision rather than a question. The
+primary model predicts whole-organism growth
 inhibition, and the protein layer annotates a shortlist rather than ranking it. Knock-on: there is no
 protein sequence in the pipeline, so cluster-level splitting is on chemical fingerprints rather than
 sequence identity. The principle, clusters not rows, is unchanged.
@@ -27,6 +29,11 @@ sequence identity. The principle, clusters not rows, is unchanged.
 - 68.6% of µg/mL values are at or below 32, so a 32 threshold labels most of the data active. That
   is publication bias in what gets reported, and it is the strongest argument for the call's
   precision-over-recall framing.
+- NPASS is not a second source. Its MIC table is a copy of ChEMBL: in a random sample of 40
+  compounds, 40 of 40 were in ChEMBL and 39 of 40 matched to three significant figures. It also
+  publishes no licence. Eleni dropped it from the pipeline on 4 Nov; ChEMBL is the single label
+  source, LOTUS the plant edge, GBIF the cross-check. Running the same comparison on both is not
+  independent replication, because it is the same underlying measurements.
 - LOTUS: use the `_frozen_metadata` Zenodo export, not `_frozen`. The latter has only InChIKeys, and
   a hash cannot be turned back into a structure, so there is nothing to featurise.
 

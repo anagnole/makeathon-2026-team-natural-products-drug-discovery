@@ -8,7 +8,9 @@ Our entry to EthnoHack 2026 (https://ethnohack2026.devpost.com/), **Track 2: Nat
 
 **Targets.** Per-target models for specific bacterial proteins rather than one general model, with proteins grouped by similar mechanism of action so that targets with few samples borrow data from their group.
 
-> **Challenged by the data, 3 Nov, and the user has not ruled on it.** Notebook 01 measured the ChEMBL MIC pull for nine bacteria: 460,711 of 462,603 rows (99.6%) are against the whole organism, and only 35 single-protein targets carry any MIC at all, median 8 compounds, 150 at best. Protein-level data exists in ChEMBL but under IC50, Ki and percent inhibition, a separate and much smaller download. So the readout the data supports is whole-organism growth inhibition, with the protein layer annotating a shortlist rather than ranking it. Until the user rules, treat per-target protein models as the call's decision and whole-organism as the measured alternative; do not quietly adopt either.
+> **Overruled by the data and settled on 4 Nov: the readout is whole-organism growth inhibition.** Notebook 01 measured the ChEMBL MIC pull for nine bacteria: 460,711 of 462,603 rows (99.6%) are against the whole organism, and only 35 single-protein targets carry any MIC at all, median 8 compounds, 150 at best. Protein-level data exists in ChEMBL but under IC50, Ki and percent inhibition, a separate and much smaller download. A per-protein model cannot be trained on this readout, so the primary model predicts whether a compound stops a given bacterium growing, and the protein layer annotates a shortlist rather than ranking it. The call's per-target framing survives as one model per bacterium, not one per protein.
+
+**Pathogens, settled 4 Nov: three.** *S. aureus*, *E. coli* and *M. tuberculosis*, one model each. Chosen on two criteria: enough plant compounds behind each one to evaluate (892, 569 and 413 with exactly one reported plant family, from the survey on `data/target-survey`), and three different cell envelopes, Gram-positive, Gram-negative and acid-fast, so that cross-predicting between them says something. *P. aeruginosa* (370) was the closest call and lost only because it is a second Gram-negative; *B. subtilis* (339) is a lab model rather than a clinical pathogen; the other four are below the floor. Adding a fourth is a loop, not a rewrite, so the real cost of each extra one is slide space. The family-split evaluation is only reportable where the test set is big enough, which at a 20% test fraction means *S. aureus* comfortably and *E. coli* marginally.
 
 **Models.** XGBoost or random forest. Optuna for the hyperparameter search, chosen over grid search. Hybrid features: sequence features combined with biophysical and biochemical properties. Score every feature set with a simple model first and tune only the best one. Feature importance for the biological reading.
 
@@ -16,11 +18,22 @@ Our entry to EthnoHack 2026 (https://ethnohack2026.devpost.com/), **Track 2: Nat
 
 **Candidate selection.** After training, project candidates into a 3D space and take the most distant ones, for biological diversity in what goes to the lab.
 
+**Deliverable.** A ranked shortlist per pathogen: compound, predicted score, source plant and its taxonomy, literature DOI, nearest-neighbour Tanimoto distance to the training set and an out-of-applicability-domain flag. **The user decided on 4 Nov that a web app over that table stays in scope**, not as a stretch goal. Keep it thin, pathogen in and shortlist out, and keep it downstream of the evaluation so it cannot eat the evaluation's time.
+
 **Compute.** Google Colab Pro for the GPU, with every intermediate saved so nothing is recomputed.
 
-**Roles.** Leonidas: start the EDA in the repo notebooks, save intermediates. Teammate: accept the repo invite, email the lab coordinator about booking, review the tutorial videos on Discord.
+**Roles.** Use names in this file, not "the user" and "the teammate": both of them work in this repo through Claude, and "the user" means whoever is driving at the time, which has already caused one contradiction between `CLAUDE.md` and the memory.
+
+Two streams that meet at the labelled table and do not block each other:
+
+- **Leonidas, data and screen.** Notebook 02 (curation: the one `CONFIG` holding unit conversion, censored handling, duplicate collapsing, threshold), the plant-side join, taxonomy and provenance, and notebook 05's screen over the 153,745 unmeasured plant structures.
+- **Eleni, model and evaluation.** Notebook 03 (features, clustering, cluster-level splits), notebook 04 (one untuned model per feature set, then Optuna on the winner, then calibration), the applicability domain, and the figures for the deck.
+
+**State on 4 Nov, so nobody redoes it.** All four downloads are done and notebook 01 has been run, so `data/processed/01_*.parquet` exists locally for whoever has run them; nothing is committed. `scripts/run_split_comparison.py` works end to end on ChEMBL and has three ledger entries. Notebooks 02 to 05 do not exist yet. The three decisions that shape them are the pathogen trio, the whole-organism readout, and the family split demoted to a secondary analysis.
 
 **Data.** "The several datasets provided" in the minutes means the organisers' own dataset list (confirmed by the user on 2 Nov): `organiser/datasets-all-tracks.docx`, with its text copy alongside, plus the suggested sources on the Track 2 slide. There is no separate hand-over of data, and the Discord link for it was never posted. For this task the entries to start from are ChEMBL for measured target activity and UniProt for normalising target identifiers, with the organisers' hosted wrappers available for compound and taxonomy lookups.
+
+**Sources, settled 4 Nov.** ChEMBL is the single source of the activity labels, LOTUS is the plant-to-compound edge and GBIF cross-checks which LOTUS organisms are plants. Every source, its licence and its download script are in `docs/data-sources.md`. NPASS is **dropped from the pipeline**: its MIC table is a copy of ChEMBL (measured on 3 Nov, 40 of 40 sampled compounds found in ChEMBL, 39 of 40 matching to three significant figures) and it publishes no licence, so it adds the same measurements with a worse provenance story. It stays in the write-up as one line: we checked, it is a copy, so we cite ChEMBL. `scripts/fetch_npass.py` is kept only as the record of that check.
 
 **What the data says about the labels** (measured in notebook 01, 3 Nov, not assumed):
 
@@ -29,7 +42,9 @@ Our entry to EthnoHack 2026 (https://ethnohack2026.devpost.com/), **Track 2: Nat
 - 37 distinct unit strings, and 68.6% of µg/mL values sit at or below 32, so a 32 threshold makes most of the data "active". That is publication bias, and it is the strongest argument for the call's precision-over-recall framing.
 - It is a virtual screen: 95,529 compounds have a measurement, 153,745 plant structures do not, and only 2,157 are in both.
 
-Still open: the per-target question above; the team name (deferred to the final presentation, so the repo keeps its placeholder).
+Still open: the team name (deferred to the final presentation, so the repo keeps its placeholder).
+
+**The plant-family split is not the headline. Measured on ChEMBL, 4 Nov, three organisms.** The criterion was whether the family-minus-scaffold gap survives by more than the repeat-to-repeat spread. It does not. *S. aureus* gives -0.073 with a paired sd of 0.067 (8 of 10 repeats), *E. coli* gives +0.004 with sd 0.139 (2 of 10, so the effect vanishes), *M. tuberculosis* gives -0.097 with sd 0.158 (7 of 10). Across four measurements now (-0.071 exploratory, -0.130 on NPASS, -0.073 and -0.097 here) the direction is usually negative and the magnitude is never stable. It goes in as a secondary analysis and an honest negative, not as the contribution. What does replicate cleanly on all three organisms is random above scaffold: 0.786/0.742, 0.769/0.669, 0.752/0.622. Two of the three family estimates come from test sets of 103 and 80 compounds, which is the likely reason they say so little.
 
 ## Repo
 

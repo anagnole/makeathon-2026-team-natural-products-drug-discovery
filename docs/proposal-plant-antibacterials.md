@@ -1,5 +1,12 @@
 # Proposal: which plant compounds deserve a closer look as antibacterials
 
+**Status, 4 Nov.** All four open questions at the bottom are answered and the decisions are in
+`CLAUDE.md`. The pipeline moved to ChEMBL plus LOTUS and NPASS was dropped. Three pathogens ship,
+*S. aureus*, *E. coli* and *M. tuberculosis*. The web app stays in scope. And the family split was
+rerun on ChEMBL across all three: **it did not hold up, so it is a secondary analysis and not the
+headline.** See "The family split, rerun" below, which replaces the original section. Numbers
+elsewhere in this document are still the 3 Nov NPASS measurements and are labelled as such.
+
 **This is a proposal, not a decision.** It is one of four problems we costed against the data,
 written up because it was the only one where every number held. Nothing here is settled, and the
 parts most likely to change are flagged as such. If you disagree with a step, the measurement
@@ -66,7 +73,43 @@ look up whatever target annotation exists and report it as context, clearly mark
 rather than prediction. There is not enough of it to train on, and a second model trained on 8
 compounds per target would be the weakest thing in the submission.
 
-## The part that should be the scientific contribution: the family split
+## The family split, rerun
+
+The section below proposed holding out whole **plant families** instead of whole chemical
+scaffolds, so the test set is the chemistry of plant lineages the model has never seen, and
+proposed it as the headline contribution. It was rerun on 4 Nov on ChEMBL labels and LOTUS
+families, across all three pathogens we ship. Numbers from `scripts/run_split_comparison.py`,
+ledger entries `325812fc7e`, `5f9c3f8f09` and `834c583662`.
+
+| Pathogen | compounds | active | random | scaffold | family | family minus scaffold | repeats family is worse |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| *S. aureus* | 823 | 35% | 0.786 | 0.742 | 0.669 | -0.073 (sd 0.067) | 8 of 10 |
+| *E. coli* | 486 | 14% | 0.769 | 0.669 | 0.673 | +0.004 (sd 0.139) | 2 of 10 |
+| *M. tuberculosis* | 400 | 34% | 0.752 | 0.622 | 0.526 | -0.097 (sd 0.158) | 7 of 10 |
+
+**It does not hold up, and we say so.** On *E. coli* the effect disappears outright. On
+*M. tuberculosis* the direction holds but the spread is larger than the effect. Only *S. aureus*
+gives a gap bigger than its own noise, and only just, at roughly one standard deviation. Over four
+measurements now, -0.071 exploratory, -0.130 on NPASS, -0.073 and -0.097 here, the direction is
+usually negative and the magnitude is never stable. The 3 Nov write-up said in its own words that
+the direction was solid and the magnitude was not; a wider test says the direction is not solid
+either.
+
+A likely mechanism, and the reason not to chase it further this week: the *E. coli* and
+*M. tuberculosis* family estimates rest on test sets of 103 and 80 compounds, and *E. coli* has
+only 68 actives in total. AUROC on that is close to unmeasurable. Establishing this properly needs
+more labelled plant chemistry than the open data holds, which is a finding about the field, not
+about the method.
+
+**What does replicate, cleanly, on all three.** Random sits above scaffold every time: 0.786
+against 0.742, 0.769 against 0.669, 0.752 against 0.622. A random split flatters the model on
+every pathogen we tried, which is the thing most hackathon entries will not have checked.
+
+So the family split ships as a secondary analysis and an honest negative, and the scaffold split
+carries the evaluation. The `seen_group_fraction` diagnostic stays, because it is what lets anyone
+read these numbers rather than take them on trust.
+
+### The original proposal, 3 Nov, kept for the record
 
 Everyone at a hackathon reports a random split. Better teams report a scaffold split. We can report
 something neither of those shows, and we have measured it.
@@ -216,20 +259,26 @@ the ChEMBL parquet files from PR #2 with the column mapping `standard_relation` 
 `standard_value` to value, `standard_units` to units.
 
 ```bash
-python3 -m pytest tests -q
-python3 scripts/fetch_npass.py
-python3 scripts/run_split_comparison.py
+uv run python -m pytest tests -q
+uv run python scripts/run_split_comparison.py --organism "Staphylococcus aureus"
 ```
 
-## Open questions, for whoever reads this next
+The second command needs the downloads and notebook 01 first; `notebooks/README.md` has the
+order. It no longer reads NPASS.
 
-1. Which pathogen do we ship first? *S. aureus* is the obvious one on data volume. Adding a second,
-   probably *P. aeruginosa* at 1,207 compounds, would let us say something about whether the model
-   is learning "antibacterial" or "anti-Staph".
-2. Does the family split go in as the headline evaluation, or as a secondary analysis next to the
-   scaffold split? Argument for headline: it is the only genuinely new thing we have.
-3. Interface or no interface. A ranked table with provenance may serve the judging criteria better
-   than a thin web app.
-4. Do we fold these modules into `notebooks/pipeline/` properly, with the loaders pointed at the
-   ChEMBL parquet files instead of the NPASS text files? That is probably step one of actually
-   building this.
+## Open questions, answered on 4 Nov
+
+1. **Which pathogens.** Three: *S. aureus*, *E. coli* and *M. tuberculosis*. Enough plant data
+   behind each (823, 486 and 400 labelled single-family compounds) and three different cell
+   envelopes, so cross-predicting between them tests whether the model learned "antibacterial" or
+   "anti-Staph". *P. aeruginosa* lost narrowly as a second Gram-negative.
+2. **Headline or secondary.** Secondary. The rerun above is why.
+3. **Interface.** It ships. Still to decide: a static table of precomputed scores, or live scoring
+   from a pasted SMILES.
+4. **Fold the modules onto ChEMBL.** Done. `scripts/run_split_comparison.py` reads the ChEMBL
+   parquet files and the LOTUS occurrences, and reuses notebook 01's InChIKey table instead of
+   recomputing it.
+
+Still open after this: the team name, whether drug-likeness filtering is applied at all or only
+flagged (plant natural products violate Lipinski routinely, so a naive filter would delete the
+interesting compounds), and the shape of the interface.
