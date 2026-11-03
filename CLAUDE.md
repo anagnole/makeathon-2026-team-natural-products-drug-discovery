@@ -8,19 +8,28 @@ Our entry to EthnoHack 2026 (https://ethnohack2026.devpost.com/), **Track 2: Nat
 
 **Targets.** Per-target models for specific bacterial proteins rather than one general model, with proteins grouped by similar mechanism of action so that targets with few samples borrow data from their group.
 
+> **Challenged by the data, 3 Nov, and the user has not ruled on it.** Notebook 01 measured the ChEMBL MIC pull for nine bacteria: 460,711 of 462,603 rows (99.6%) are against the whole organism, and only 35 single-protein targets carry any MIC at all, median 8 compounds, 150 at best. Protein-level data exists in ChEMBL but under IC50, Ki and percent inhibition, a separate and much smaller download. So the readout the data supports is whole-organism growth inhibition, with the protein layer annotating a shortlist rather than ranking it. Until the user rules, treat per-target protein models as the call's decision and whole-organism as the measured alternative; do not quietly adopt either.
+
 **Models.** XGBoost or random forest. Optuna for the hyperparameter search, chosen over grid search. Hybrid features: sequence features combined with biophysical and biochemical properties. Score every feature set with a simple model first and tune only the best one. Feature importance for the biological reading.
 
-**Splits.** Cluster by sequence similarity (around 90% identity) and split the clusters, not the rows, into train, validation and test, so the model cannot memorise near-identical sequences.
+**Splits.** Cluster and split the clusters, not the rows, into train, validation and test, so the model cannot memorise near-identical entries. The call said sequence similarity at around 90% identity; under the whole-organism readout there is no protein sequence in the pipeline, so this becomes chemical similarity clustering on fingerprints. The principle (cluster-level splits, not row-level) is the part that matters and holds either way.
 
 **Candidate selection.** After training, project candidates into a 3D space and take the most distant ones, for biological diversity in what goes to the lab.
 
 **Compute.** Google Colab Pro for the GPU, with every intermediate saved so nothing is recomputed.
 
-**Roles.** Leonidas: Colab GPU, start the EDA in the repo notebooks, save intermediates. Teammate: accept the repo invite, email the lab coordinator about booking, review the tutorial videos on Discord.
+**Roles.** Leonidas: start the EDA in the repo notebooks, save intermediates. Teammate: accept the repo invite, email the lab coordinator about booking, review the tutorial videos on Discord.
 
 **Data.** "The several datasets provided" in the minutes means the organisers' own dataset list (confirmed by the user on 2 Nov): `organiser/datasets-all-tracks.docx`, with its text copy alongside, plus the suggested sources on the Track 2 slide. There is no separate hand-over of data, and the Discord link for it was never posted. For this task the entries to start from are ChEMBL for measured target activity and UniProt for normalising target identifiers, with the organisers' hosted wrappers available for compound and taxonomy lookups.
 
-Still open: the team name (deferred to the final presentation, so the repo keeps its placeholder). One item in the minutes, "auto 5-mer", is unclear and nobody should guess at it.
+**What the data says about the labels** (measured in notebook 01, 3 Nov, not assumed):
+
+- No MIC row carries a pChEMBL value. The usual `pchembl_value__isnull=false` quality filter silently empties the whole dataset.
+- 21.6% of rows are `>` or `>=`: tested and found inactive. That is most of the negative class, so it can neither be dropped nor read as an exact number.
+- 37 distinct unit strings, and 68.6% of µg/mL values sit at or below 32, so a 32 threshold makes most of the data "active". That is publication bias, and it is the strongest argument for the call's precision-over-recall framing.
+- It is a virtual screen: 95,529 compounds have a measurement, 153,745 plant structures do not, and only 2,157 are in both.
+
+Still open: the per-target question above; the team name (deferred to the final presentation, so the repo keeps its placeholder).
 
 ## Repo
 
@@ -60,7 +69,7 @@ Suggested open data: COCONUT, NPASS, ChEMBL, PubChem, KNApSAcK, UniProt, PDB, Dr
 
 `organiser/datasets-all-tracks.docx` (text copy `organiser/datasets-all-tracks.txt`). Points that matter for Track 2:
 
-- The organisers host their own REST wrappers, HTTPS on port 65000, Swagger at `/docs`: `coconut`, `chebi`, `brenda`, `wfo`, `ipni`, `wcvp`, `taxtree` under `.ethcstwin.di.uoa.gr`. Plain HTTP returns 400. All three tested answered 200 on 2 Nov.
+- The organisers host their own REST wrappers, HTTPS on port 65000, Swagger at `/docs`: `coconut`, `chebi`, `brenda`, `wfo`, `ipni`, `wcvp`, `taxtree` under `.ethcstwin.di.uoa.gr`. Plain HTTP returns 400. `curl` reached coconut, chebi and wfo with 200 on 2 Nov, but on 3 Nov Python could not verify their certificate (`CERTIFICATE_VERIFY_FAILED`, no local issuer) and they were dropped from the pipeline. Both results are real: `curl` uses the system trust store and Python uses certifi's. If these APIs are ever wanted, that difference is the thing to fix, not the servers.
 - LOTUS (CC0, via Wikidata SPARQL) is called "the cleanest open plant to compound edge", with references.
 - WFO ID is the recommended primary plant identifier.
 - ChEMBL is CC BY-SA; keep assay type, organism, units and relation intact.

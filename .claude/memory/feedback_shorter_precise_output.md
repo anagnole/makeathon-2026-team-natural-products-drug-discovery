@@ -16,6 +16,11 @@ said a million things i dont know what to read first", "this is too chaotic for 
 to review". Combined with the lost-artifact tax - 11 prompts spent just asking
 where a produced file went ("where is the file located", "i dont see it").
 
+**Don't inflate urgency.** On 3 Nov the user said "let me make somethgin clear, it is not urgent chill",
+after I labelled a pinned step URGENT and called a problem time-sensitive. It was a wrong PR branch on
+day 2 of a six-day hackathon: real, worth fixing, not urgent. State what is wrong and what fixes it,
+then let the user set the pace. The submission deadline is the only hard clock on this project.
+
 **How to apply:** Rank by importance, cut preamble, group into scannable chunks.
 Always state the absolute path of any file you produce, and confirm the target
 format before generating it. Ask questions one at a time, not in batches. Related:

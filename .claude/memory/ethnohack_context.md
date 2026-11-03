@@ -13,9 +13,10 @@ State as of Mon 2026-11-02, day 1 of the hackathon. The full brief is `~/Project
 - At the user's request (2 Nov) `CLAUDE.md` and this memory are in the repo. The memory lives at `.claude/memory/` in the repo, and `~/.claude/projects/-Users-anagnole-Projects-ethnohack/memory` is a symlink to it, so memory edits land in the repo for the user to commit. Keep them free of secrets, promo codes and third-party names.
 - `organiser/` (opening slides, dataset guide, GitHub guide, Anakin claim doc) stays out of git via `.git/info/exclude`.
 - The user runs several Claude sessions at once; a supervisor session may relay their requests by cross-session message.
+- **Ownership, set by the user on 3 Nov after three panes pinned 13 overlapping steps.** This session owns `CLAUDE.md`, the project memory and the submission checklist. Pane 2 owns the data, the notebooks and its own branch. Pane 3 owns the teammate's PR and the stale branch. Don't pin, chase or duplicate another pane's item, and don't edit a file section another pane is actively rewriting. Keep the pinned list to this session's own steps.
 - On 2 Nov the supervisor session sent everything the user gave it: the slides PDF, the Devpost URL, kickoff call notes, the Discord rules and FAQ, and the #track-2 intro. All of it is folded into CLAUDE.md. It knew nothing about the team beyond "we have a team", so team facts must come from the user.
 
-Open points: team name (then `gh repo rename`), making the repo public before submitting, and "auto 5-mer" in the minutes. The task, models, splits and roles were settled on the 2 Nov call and are in `CLAUDE.md`; the datasets question is closed.
+Open points: team name (then `gh repo rename`) and making the repo public before submitting. The task, models, splits and roles were settled on the 2 Nov call and are in `CLAUDE.md`; the datasets question is closed.
 
 Dropped: adding the teammate as a collaborator. The attempt was blocked here (granting repo permissions is a permission grant in this session) and on 3 Nov the user told me to drop it. The handle is in `organiser/teammate-background.md` if it is ever wanted. Don't raise it again unasked.
 
