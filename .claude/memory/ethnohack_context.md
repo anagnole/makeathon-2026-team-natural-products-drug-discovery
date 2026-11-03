@@ -15,6 +15,8 @@ State as of Mon 2026-11-02, day 1 of the hackathon. The full brief is `~/Project
 - The user runs several Claude sessions at once; a supervisor session may relay their requests by cross-session message.
 - On 2 Nov the supervisor session sent everything the user gave it: the slides PDF, the Devpost URL, kickoff call notes, the Discord rules and FAQ, and the #track-2 intro. All of it is folded into CLAUDE.md. It knew nothing about the team beyond "we have a team", so team facts must come from the user.
 
+Git workflow decided 2 Nov (copy Leonidas): `area/what` branches, PR to `main`, no `dev`, one-line commits; see CLAUDE.md. Structure branch: `chore/repo-structure`, uncommitted until the user commits.
+
 Open points: team name (then `gh repo rename`), the teammate's GitHub handle (add as collaborator), the project idea, who does what, making the repo public.
 
 **Why:** a one-week hackathon with a hard deadline (Sun 8 Nov 10:00 CET); losing track of these costs the submission.

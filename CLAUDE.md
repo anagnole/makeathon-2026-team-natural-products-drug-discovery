@@ -10,6 +10,15 @@ This folder is the repo: https://github.com/anagnole/makeathon-2026-team-natural
 
 Sources: `organiser/opening-ceremony.pdf` (the 2 Nov opening slides, the most authoritative) the Discord rules and FAQ of 30 Oct, the #track-2 channel intro, and auto-generated kickoff call notes (garbled in places: they call it the "Fathom Hackathon", list the wrong partners and mix up Track 3, so trust the slides). All summarised below; the verbatim pastes are not on disk.
 
+## Git workflow
+
+Copied from how Leonidas works in Echo and Dyania. `main` only receives merges. Each piece of work is a branch named `area/what`, with area one of `data`, `model`, `app`, `docs`, `fix`, `chore` (e.g. `model/scaffold-split`), merged to `main` by a PR. No `dev` branch. Commit messages are one imperative line, no body, no attribution trailer. Update the Status section below in the same change as the work.
+
+## Status
+
+- **2 Nov:** repo cloned, structure set up (`chore/repo-structure`): README skeleton, `data/` (contents ignored), `notebooks/`, `.env.example`, this workflow. Idea and stack still open. Organiser dataset guide saved locally in `organiser/` (git-ignored).
+- **Next:** pick the idea, the data and the split of work.
+
 ## The event
 
 - Run by ETHCSTWIN, a Horizon Europe project (June 2024 to May 2027) twinning the Institute for Ethnopharmacological Studies & Phytotherapy (IESP, University of Athens) with computer science. Partners: IESP NKUA (Greece), Fraunhofer SCAI bioinformatics (Germany), Pangea Botanica / PangeAI (Germany, plant-use data for drug discovery), University of Gastronomic Sciences Pollenzo (Italy), University of Prishtina (Kosovo). Their mission line: "Turn traditional knowledge into evidence for drug discovery."
