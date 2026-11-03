@@ -5,11 +5,16 @@ compounds, one model, three ways of deciding what counts as held out. Prints the
 next to them, how much of the test chemistry the model had already seen, which is what makes the
 family result interpretable rather than just lower.
 
-Needs the NPASS files: python scripts/fetch_npass.py
+Labels come from ChEMBL and the plant families from LOTUS, cross-checked against GBIF. Needs the
+downloads and notebook 01:
+
+    uv run python scripts/fetch_chembl.py MIC
+    uv run python scripts/fetch_lotus.py
+    uv run python scripts/fetch_taxonomy.py
+    uv run jupyter nbconvert --to notebook --execute --inplace notebooks/01_data.ipynb
 """
 
 import argparse
-import os
 import statistics
 import sys
 from pathlib import Path
@@ -22,86 +27,81 @@ from sklearn.metrics import roc_auc_score
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "notebooks"))
 
-from pipeline import features, labels, ledger, splits  # noqa: E402
+from pipeline import data, features, labels, ledger, splits  # noqa: E402
 
-DATA = Path(os.environ.get("ETHNOHACK_DATA_DIR", ROOT / "data"))
-NPASS = DATA / "npass"
-PLANT_KINGDOM = "Viridiplantae"
-MISSING = {"n.a.", "", "NA", None}
+PLANT_OCCURRENCES = "01_plant_occurrences.parquet"
+STRUCTURES = "01_structures.parquet"
 
 
-def read_tsv(path, columns):
+def slug(organism):
+    return organism.lower().replace(" ", "_")
+
+
+def inchikey_map(smiles):
+    """SMILES to InChIKey, reusing notebook 01's table and computing only what it misses."""
+    path = data.PROCESSED / STRUCTURES
+    known = {}
+    if path.exists():
+        saved = pd.read_parquet(path, columns=["canonical_smiles", "inchikey"]).dropna()
+        known = dict(zip(saved.canonical_smiles, saved.inchikey, strict=False))
+    missing = [s for s in smiles if s not in known]
+    if missing:
+        print(f"  computing {len(missing):,} InChIKeys not in {STRUCTURES}")
+        known.update(dict(zip(missing, data.inchikeys(missing), strict=False)))
+    return known
+
+
+def load_activity(organism, standard_type):
+    """MIC rows for one bacterium, with an InChIKey skeleton and a micromolar value per row."""
+    path = data.RAW / f"chembl_{standard_type}_{slug(organism)}.parquet"
     if not path.exists():
-        raise SystemExit(f"{path} missing. Run scripts/fetch_npass.py first.")
-    return pd.read_csv(
-        path, sep="\t", usecols=columns, dtype=str, encoding_errors="replace", low_memory=False
-    )
+        raise SystemExit(f"{path} missing. Run scripts/fetch_chembl.py {standard_type.upper()}.")
+    frame = pd.read_parquet(
+        path,
+        columns=["canonical_smiles", "standard_relation", "standard_value", "standard_units"],
+    ).dropna(subset=["canonical_smiles", "standard_value"])
+    frame["standard_value"] = pd.to_numeric(frame.standard_value, errors="coerce")
+    frame = frame.dropna(subset=["standard_value"])
 
+    unique = frame.canonical_smiles.unique()
+    print(f"{organism}: {len(frame):,} MIC rows, {len(unique):,} structures")
+    inchikey = inchikey_map(unique)
+    weight = {s: labels.mol_weight_from_smiles(s) for s in unique}
 
-def load_structures(directory):
-    frame = read_tsv(
-        directory / "NPASS3.0_naturalproducts_structure.txt", ["np_id", "SMILES", "InChIKey"]
-    )
-    frame = frame[~frame.SMILES.isin(MISSING) & frame.SMILES.notna()]
-    return frame.set_index("np_id")
-
-
-def load_plant_families(directory):
-    """np_id -> set of plant families it has been reported from."""
-    info = read_tsv(
-        directory / "NPASS3.0_species_info.txt", ["org_id", "kingdom_name", "family_name"]
-    )
-    info = info[info.kingdom_name.eq(PLANT_KINGDOM) & ~info.family_name.isin(MISSING)]
-    family_of = dict(zip(info.org_id, info.family_name))
-    pairs = read_tsv(
-        directory / "NPASS3.0_naturalproducts_species_pair.txt", ["np_id", "org_id"]
-    )
-    pairs = pairs[pairs.org_id.isin(family_of)]
-    pairs = pairs.assign(family=pairs.org_id.map(family_of))
-    return pairs.groupby("np_id").family.agg(set)
-
-
-def load_activity(directory, organism, structures):
-    """Micromolar MIC rows for one assay organism, units resolved via rdkit molecular weight."""
-    frame = read_tsv(
-        directory / "NPASS3.0_activities.txt",
-        [
-            "np_id",
-            "activity_type",
-            "activity_type_grouped",
-            "assay_organism",
-            "activity_value",
-            "activity_units",
-            "activity_relation",
-        ],
-    )
-    is_mic = frame.activity_type.eq("MIC") | frame.activity_type_grouped.eq("MIC")
-    matches = frame.assay_organism.fillna("").str.lower().str.startswith(organism.lower())
-    frame = frame[is_mic & matches].copy()
-    weights = {}
-    for np_id in frame.np_id.unique():
-        smiles = structures.SMILES.get(np_id)
-        weights[np_id] = labels.mol_weight_from_smiles(smiles) if smiles else None
+    frame["skeleton"] = [features.skeleton(inchikey.get(s)) for s in frame.canonical_smiles]
     frame["value_um"] = [
-        labels.to_micromolar(value, unit, weights.get(np_id))
-        for np_id, value, unit in zip(frame.np_id, frame.activity_value, frame.activity_units)
+        labels.to_micromolar(value, unit, weight.get(smiles))
+        for smiles, value, unit in zip(
+            frame.canonical_smiles, frame.standard_value, frame.standard_units, strict=False
+        )
     ]
     lost = frame.value_um.isna().sum()
-    print(f"{organism}: {len(frame):,} MIC rows, {lost:,} unconvertible ({lost / len(frame):.1%})")
-    return frame.dropna(subset=["value_um"])
+    print(f"{organism}: {lost:,} rows unconvertible ({lost / len(frame):.1%})")
+    return frame.dropna(subset=["skeleton", "value_um"])
 
 
-def build_dataset(directory, organism, threshold_um):
-    structures = load_structures(directory)
-    activity = load_activity(directory, organism, structures)
-    label_of = labels.label_table(activity, "np_id", "activity_relation", "value_um", threshold_um)
-    families = load_plant_families(directory)
+def load_plant_families():
+    """InChIKey skeleton -> set of plant families LOTUS reports it from."""
+    path = data.PROCESSED / PLANT_OCCURRENCES
+    if not path.exists():
+        raise SystemExit(f"{path} missing. Run notebook 01 first; notebooks/README.md says how.")
+    occurrences = pd.read_parquet(
+        path, columns=["structure_inchikey", "structure_smiles", "family"]
+    ).dropna(subset=["structure_inchikey", "family"])
+    occurrences["skeleton"] = occurrences.structure_inchikey.str.split("-").str[0]
+    return occurrences
+
+
+def build_dataset(organism, standard_type, threshold_um):
+    activity = load_activity(organism, standard_type)
+    label_of = labels.label_table(
+        activity, "skeleton", "standard_relation", "value_um", threshold_um
+    )
+    occurrences = load_plant_families()
+    families = occurrences.groupby("skeleton").family.agg(set)
     single = {k: next(iter(v)) for k, v in families.items() if len(v) == 1}
-    records = [
-        (k, structures.SMILES.get(k), structures.InChIKey.get(k))
-        for k in label_of
-        if k in single and k in structures.index
-    ]
+    smiles_of = dict(zip(activity.skeleton, activity.canonical_smiles, strict=False))
+    records = [(k, smiles_of[k], k) for k in label_of if k in single]
     rows = features.featurise(records)
     for row in rows:
         row["label"] = label_of[row["key"]]
@@ -132,15 +132,15 @@ def score(rows, train_index, test_index, groups):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--data-dir", type=Path, default=NPASS)
     parser.add_argument("--organism", default="Staphylococcus aureus")
+    parser.add_argument("--standard-type", default="mic", help="which ChEMBL readout to read")
     parser.add_argument("--threshold", type=float, default=32.0, help="active at or below, in uM")
     parser.add_argument("--repeats", type=int, default=10)
     parser.add_argument("--note", default="random vs scaffold vs plant-family split")
     parser.add_argument("--no-ledger", action="store_true", help="skip the results/ ledger entry")
     args = parser.parse_args()
 
-    rows = build_dataset(args.data_dir, args.organism, args.threshold)
+    rows = build_dataset(args.organism, args.standard_type, args.threshold)
     n = len(rows)
     positives = sum(r["label"] for r in rows)
     scaffolds = [r["scaffold"] for r in rows]
@@ -181,7 +181,7 @@ def main():
             f"{statistics.mean(seen[name]):>30.0%}"
         )
 
-    paired = [f - s for f, s in zip(results["family"], results["scaffold"])]
+    paired = [f - s for f, s in zip(results["family"], results["scaffold"], strict=False)]
     if paired:
         worse = sum(1 for d in paired if d < 0)
         print(
@@ -199,7 +199,7 @@ def main():
     config = {
         "task": f"{args.organism} MIC",
         "threshold_um": args.threshold,
-        "label_source": "NPASS 3.0 activities (a copy of ChEMBL), plant families from NPASS",
+        "label_source": "ChEMBL MIC, plant families from LOTUS cross-checked against GBIF",
         "compounds": "plant-derived, exactly one reported family, deduplicated by InChIKey skeleton",
         "features": f"Morgan r={features.FINGERPRINT_RADIUS} bits={features.FINGERPRINT_BITS}",
         "model": "RandomForestClassifier(500, min_samples_leaf=2, class_weight=balanced)",

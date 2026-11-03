@@ -7,8 +7,15 @@ import requests
 
 ROOT = Path(__file__).resolve().parents[1]
 RAW = Path(os.environ.get("ETHNOHACK_DATA_DIR", ROOT / "data")) / "raw"
-LOTUS = RAW / "lotus" / "260413_frozen.csv.gz"
 OUT = RAW / "gbif_organisms.parquet"
+
+
+def lotus_export():
+    """The frozen metadata export fetch_lotus.py downloads, whatever date it carries."""
+    found = sorted((RAW / "lotus").glob("*_frozen_metadata.csv.gz"))
+    if not found:
+        raise SystemExit(f"no LOTUS export in {RAW / 'lotus'}. Run scripts/fetch_lotus.py first.")
+    return found[-1]
 
 WORKERS = 16
 FIELDS = ["kingdom", "phylum", "class", "order", "family", "genus",
@@ -28,7 +35,7 @@ def resolve(session, name):
 
 
 def main():
-    names = sorted(pd.read_csv(LOTUS, usecols=["organism_name"],
+    names = sorted(pd.read_csv(lotus_export(), usecols=["organism_name"],
                                low_memory=False).organism_name.dropna().unique())
     done = set()
     if OUT.exists():
