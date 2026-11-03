@@ -218,3 +218,9 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Data (never committed; scripts/fetch_chembl.py downloads it)
+data/
+
+# Environment
+.venv/

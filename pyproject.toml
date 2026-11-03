@@ -1,0 +1,36 @@
+[project]
+name = "ethnohack-natural-products"
+version = "0.1.0"
+description = "Ranking plant natural products by predicted antibacterial activity (EthnoHack 2026, Track 2)"
+readme = "README.md"
+requires-python = ">=3.12,<3.14"
+dependencies = [
+    "ipykernel>=7.3.0",
+    "jupyter>=1.1.1",
+    "matplotlib>=3.10.9",
+    "nbconvert>=7.17.1",
+    "nbformat>=5.11.1",
+    "numpy>=2.3.0",
+    "optuna>=4.6.0",
+    "pandas>=2.3.0",
+    "pyarrow>=21.0.0",
+    "rdkit>=2025.3.1",
+    "requests>=2.32.3",
+    "scikit-learn>=1.7.0",
+    "scipy>=1.15.0",
+    "shap>=0.48.0",
+    "xgboost>=3.0.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.4.0",
+    "ruff>=0.12.0",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E9", "F", "B"]
