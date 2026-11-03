@@ -42,3 +42,14 @@ def test_censored_below_threshold_says_nothing():
 
 def test_exact_value_above_threshold_is_a_negative():
     assert binary_label([("=", 64.0)], 32.0) == 0
+
+
+def test_missing_unit_is_a_loss_not_a_crash():
+    assert to_micromolar(32, float("nan"), 320.0) is None
+    assert to_micromolar(32, None, 320.0) is None
+    assert to_micromolar(32, 32, 320.0) is None
+
+
+def test_missing_relation_reads_as_exact():
+    assert binary_label([(float("nan"), 8.0)], 32.0) == 1
+    assert binary_label([(float("nan"), 64.0)], 32.0) == 0
