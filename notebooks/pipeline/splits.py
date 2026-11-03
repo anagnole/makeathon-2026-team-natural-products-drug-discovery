@@ -53,3 +53,14 @@ def seen_group_fraction(groups, train_indices, test_indices, ignore=("none", Non
         return 0.0
     seen = sum(1 for i in test_indices if groups[i] in train_groups)
     return seen / len(test_indices)
+
+
+def group_split_three(groups, seed, validation_fraction=0.15, test_fraction=0.15):
+    """Split group-wise into train, validation and test, so no group straddles a partition."""
+    rest, test = group_split(groups, seed, test_fraction)
+    rest_groups = [groups[i] for i in rest]
+    inner_fraction = validation_fraction / max(1e-9, 1.0 - test_fraction)
+    inner_train, inner_validation = group_split(rest_groups, seed + 1000, inner_fraction)
+    train = [rest[i] for i in inner_train]
+    validation = [rest[i] for i in inner_validation]
+    return sorted(train), sorted(validation), sorted(test)
