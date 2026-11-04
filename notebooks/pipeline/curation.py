@@ -75,6 +75,21 @@ def plant_annotation():
     return set(grouped.index), single
 
 
+def representative_smiles(frame):
+    counts = (
+        frame.groupby(["skeleton", "canonical_smiles"])
+        .size()
+        .rename("rows")
+        .reset_index()
+    )
+    counts["length"] = counts.canonical_smiles.str.len()
+    counts = counts.sort_values(
+        ["skeleton", "rows", "length", "canonical_smiles"],
+        ascending=[True, False, True, True],
+    )
+    return counts.drop_duplicates("skeleton").set_index("skeleton").canonical_smiles
+
+
 def curate(organism, threshold_um=PRIMARY_THRESHOLD_UM, standard_type="mic", drop_flagged=True):
     steps = []
 
@@ -130,12 +145,7 @@ def curate(organism, threshold_um=PRIMARY_THRESHOLD_UM, standard_type="mic", dro
     steps.append({"step": f"compounds with a verdict at {threshold_um:g} uM", "rows": len(label_of)})
 
     measured = frame.groupby("skeleton").size()
-    smiles_of = (
-        frame.sort_values("standard_value")
-        .drop_duplicates("skeleton")
-        .set_index("skeleton")
-        .canonical_smiles
-    )
+    smiles_of = representative_smiles(frame)
     known_plants, single_family = plant_annotation()
 
     table = pd.DataFrame(

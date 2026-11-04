@@ -91,14 +91,21 @@ def unpack_morgan(packed):
     return unpacked
 
 
-def matrices(bundle):
-    morgan = unpack_morgan(bundle["morgan"])
-    desc = bundle["descriptors"]
-    return {
-        "morgan": morgan,
-        "descriptors": desc,
-        "hybrid": np.hstack([morgan, desc]),
-    }
+def matrices(bundle, which=None):
+    wanted = {"morgan", "descriptors", "hybrid"} if which is None else set(np.atleast_1d(which))
+    out = {}
+    morgan = unpack_morgan(bundle["morgan"]) if wanted & {"morgan", "hybrid"} else None
+    if "morgan" in wanted:
+        out["morgan"] = morgan
+    if "descriptors" in wanted:
+        out["descriptors"] = bundle["descriptors"]
+    if "hybrid" in wanted:
+        out["hybrid"] = np.hstack([morgan, bundle["descriptors"]])
+    return out
+
+
+def matrix(bundle, name):
+    return matrices(bundle, [name])[name]
 
 
 def save(bundle, name):

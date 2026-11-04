@@ -17,6 +17,10 @@ MOLAR_TO_UM = {
     "nm": 1e-3,
     "nmol/l": 1e-3,
     "pm": 1e-6,
+    "umol/cm3": 1e3,
+    "umol/ul": 1e6,
+    "10^-3mm": 1.0,
+    "10^-6 um": 1e-6,
 }
 
 # factor to microgram per millilitre, for units expressed per volume
@@ -33,10 +37,49 @@ MASS_TO_UG_ML = {
     "g/l": 1e3,
     "ng/ml": 1e-3,
     "ug/l": 1e-3,
+    "ug l-1": 1e-3,
+    "p.p.m.": 1.0,
+    "microg/cm3": 1.0,
+    "ug cm**-3": 1.0,
+    "10^-4 ug/ml": 1e-4,
+    "10'4pg/ml": 1e-2,
 }
 
-# NPASS writes a handful of rows this way; 1 * 10^-2 umol/ml is 10 uM
-ODDITIES = {"10'-2 umol/ml": 10.0}
+# ChEMBL stores a few rows with the exponent mangled into the unit string. Each of these is a
+# concentration per millilitre with a leading power of ten, so the factor below is the power
+# multiplied by that unit's own conversion to micromolar.
+ODDITIES = {
+    "10'-2 umol/ml": 10.0,
+    "10'-2umol/ml": 10.0,
+    "10'-2micromol/ml": 10.0,
+    "10'-3micromol/ml": 1.0,
+    "10^-3micromol/ml": 1.0,
+    "10'-2mmol/ml": 1e4,
+    "10^2umol/ml": 1e5,
+}
+
+# Deliberately not converted. Each is either a different physical quantity or too ambiguous to
+# guess at, and a wrong conversion is worse than a dropped row.
+REFUSED_UNITS = {
+    "ug cm**-2": "per unit area, not a concentration",
+    "ug/sq.cm": "per unit area, not a concentration",
+    "ug disk-1": "disk diffusion, not a broth MIC",
+    "ug/disk": "disk diffusion, not a broth MIC",
+    "ug": "mass with no volume",
+    "microg": "mass with no volume",
+    "mg": "mass with no volume",
+    "10'-2umol": "amount of substance with no volume",
+    "ug mg-1": "per unit mass of something else",
+    "ul/ml": "volume ratio, not a concentration",
+    "%": "a percentage of an unstated reference",
+    "%v/v": "a percentage of an unstated reference",
+    "u ml-1": "enzyme activity units",
+    "iu/ml": "international units",
+    "ucm/s": "a velocity",
+    "10'-3um/ml": "malformed: a concentration divided by a volume",
+    "pug ml-1": "ambiguous prefix",
+    "ug m1 l-1": "garbled",
+}
 
 ACTIVE_RELATIONS = frozenset({"=", "<", "<="})
 INACTIVE_RELATIONS = frozenset({">", ">="})

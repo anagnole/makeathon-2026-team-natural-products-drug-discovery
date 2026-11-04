@@ -3,65 +3,44 @@
 One stage per notebook, run in order. Each saves what the next one loads, so nothing is recomputed.
 The shared code is in [`pipeline/`](pipeline); the notebooks load, call and show.
 
-**Changed on 4 Nov, read this first if you were away.** Three pathogens ship rather than nine, the
-readout is whole-organism, and NPASS is out of the pipeline. The plant-family split was rerun on
-ChEMBL across all three pathogens and did not hold up, so it is a secondary analysis now and the
-scaffold split carries the evaluation; the numbers are in `results/LEDGER.md` and the reasoning is
-in `docs/proposal-plant-antibacterials.md`. `CLAUDE.md` has every decision and who owns which
-stream. Nothing about the deliverable changed.
+**The task.** Rank plant natural products by predicted antibacterial activity against three
+pathogens, *Staphylococcus aureus*, *Escherichia coli* and *Mycobacterium tuberculosis*, one model
+each, on a whole-organism readout. Precision at the head of the ranking is the metric that matters,
+because the cost of a false positive is a wasted synthesis. `CLAUDE.md` has every decision and who
+owns which stream; `docs/proposal-plant-antibacterials.md` has the reasoning behind the pathogens,
+the readout, and the demotion of the plant-family split to a secondary analysis.
 
 ## Notebooks, in order
 
 | Notebook | What it does | Main outputs |
 |---|---|---|
-| [`01_data.ipynb`](01_data.ipynb) | What ChEMBL, LOTUS and the GBIF backbone contain before any cleaning: coverage per organism and per target, how the activity values are reported, censoring, units, replication, the plant side, how much plant chemistry carries an antibacterial measurement, and how far the screening set sits from the training set | `data/processed/01_activities.parquet`, `01_structures.parquet`, `01_plant_occurrences.parquet`, `01_plant_structures.parquet`; figures `01_*` |
-| `02_curation.ipynb` | **Next up, Leonidas.** The cleaning and labelling decisions, each a key in one `CONFIG`. Every decision it has to make is already answered, see "Notebook 02" below | `data/processed/02_labelled_<organism>.parquet`, one per pathogen |
-| `03_features.ipynb` | Not written yet. Feature sets, similarity clustering, cluster-level train/validation/test split | planned |
-| `04_models.ipynb` | Not written yet. Screen each feature set with one untuned model, then Optuna on the winner, then calibration | planned |
-| `05_results.ipynb` | Not written yet. Precision at the head of the ranking, feature importance, diversity selection, ledger entry | planned |
+| [`01_data.ipynb`](01_data.ipynb) | What ChEMBL, LOTUS and the GBIF backbone contain before any cleaning: coverage per organism and per target, how the activity values are reported, censoring, units, replication, the plant side, and how far plant chemistry sits from the measured chemistry | `data/processed/01_activities.parquet`, `01_structures.parquet`, `01_plant_occurrences.parquet`, `01_plant_structures.parquet`; figures `01_*` |
+| [`02_curation.ipynb`](02_curation.ipynb) | Every cleaning and labelling decision, each a key in one `CONFIG`: unit conversion through molecular weight, censored rows kept and labelled, repeats collapsed to one label per compound, deduplication by InChIKey skeleton. Shows what each step removes, the class balance at both thresholds, and how much of the negative class is censored | `data/processed/02_labelled_<organism>.parquet`, one per pathogen; figures `02_*`; ledger entries |
+| [`03_features.ipynb`](03_features.ipynb) | Three feature sets (Morgan, physicochemical descriptors, hybrid), scaffold clustering, and the cluster-level train/validation/test split with plant-derived compounds held out of training entirely. Measures how much chemistry each split really holds back, both by shared scaffolds and by nearest-neighbour similarity | `data/processed/03_features_<organism>.npz`, `03_splits_<organism>.parquet`; figures `03_*`; ledger entries |
+| [`04_models.ipynb`](04_models.ipynb) | Screens every feature set against two model families over three seeds, tunes only the winner with Optuna, calibrates it on validation with the model frozen, then scores once on both held-out sets | `data/processed/04_models_<organism>.pkl`, `04_scores_<organism>_<set>.parquet`; figures `04_*`; ledger entries |
+| [`05_results.ipynb`](05_results.ipynb) | Both evaluations side by side with the argument for which should lead, permutation feature importance, the applicability domain, and the ranked shortlist per pathogen with diversity selection | `results/shortlist_<organism>.csv`; figures `05_*`; ledger entries |
 
-## Notebook 02
-
-The hand-off, written 4 Nov. Notebook 01's closing table listed six things 02 had to decide. All
-six are now decided, and the code for most of them exists, so this is a smaller job than it looks.
-
-**Three pathogens, one labelled table each.** `staphylococcus_aureus`, `escherichia_coli`,
-`mycobacterium_tuberculosis`. Why these three is in `CLAUDE.md`.
-
-| decision | the answer | where the code already is |
-|---|---|---|
-| activity threshold | 32 µM primary, with 10 µM reported as a one-line sensitivity check | `CONFIG` |
-| censored rows | kept. `>` and `>=` at or above the threshold are negatives, `<` and `<=` at or below are positives, a `>` below the threshold says nothing and the compound drops out | `labels.binary_label` |
-| units | convert through RDKit molecular weight. Expect 0.6% to 0.9% unconvertible and drop those rows | `labels.to_micromolar` |
-| collapsing repeats | one label per compound, active wins over inactive across papers | `labels.label_table` |
-| organisms together or apart | apart. Three models, no organism feature | the loop in 02 |
-| plant-derived compounds | held out, not trained on. They are the only direct evidence of transfer | 03's job, but 02 has to carry the flag |
-
-**Deduplication is by InChIKey skeleton**, not by ChEMBL id, so that salt forms and stereoisomers
-do not straddle a split. `features.skeleton` does it, and notebook 01 already saved the SMILES to
-InChIKey mapping in `01_structures.parquet`, so do not recompute it.
-
-**Suggested columns** for each output table: `skeleton`, `canonical_smiles`, `label`,
-`n_measurements`, `from_plant`, and `family` where LOTUS reports exactly one.
-
-`scripts/run_split_comparison.py` already does all of this end to end for one organism. Its
-`load_activity` and `build_dataset` are the working reference; lifting the shared parts into
-`pipeline/` is welcome but not required.
-
-**What 02 should show, not just compute:** how many rows each cleaning step removes, the class
-balance per pathogen at both thresholds, and how much of the negative class comes from censored
-rows. Those are the figures the "data science quality" criterion is looking for.
-
-**Not yours, so no need to touch it:** features, splits, models, calibration and the applicability
-domain are Eleni's stream, in notebooks 03 and 04. The two streams meet at these tables.
+The two figures that carry the argument are `03_evaluation_ladder` and `03_nearest_neighbour`. The
+same model scores around 0.91 on a random split, around 0.86 on a scaffold split and 0.61 to 0.66
+on plant compounds held out of training. The second figure shows why: a scaffold split holds out
+scaffolds, not analogues, so the median held-out compound still has a close neighbour in training,
+while plant compounds sit much further out.
 
 ## Shared code
 
 | Module | Contents |
 |---|---|
-| `pipeline/data.py` | where the data lives, loaders for each source, InChIKey computation, saving processed tables |
-| `pipeline/viz.py` | plot style and figure saving |
+| `pipeline/data.py` | where the data lives, loaders for each source, InChIKey computation |
+| `pipeline/labels.py` | unit conversion, censored-aware labelling, and the units deliberately refused |
+| `pipeline/curation.py` | one cleaning pass per pathogen, returning the table and a step-by-step audit |
+| `pipeline/features.py` | fingerprints, Murcko scaffolds, InChIKey skeletons |
+| `pipeline/featureset.py` | the three feature sets, stored packed and unpacked through one checked helper |
+| `pipeline/splits.py` | random, group and three-way group splits, and the leakage diagnostic |
+| `pipeline/models.py` | model builders, precision and enrichment at the head of a ranking, bootstrap intervals |
+| `pipeline/viz.py` | plot style and figure saving, including figure layout so no notebook repeats it |
 | `pipeline/ledger.py` | the run ledger in `results/` |
+
+Tests live in [`../tests`](../tests): `uv run python -m pytest tests/ -q`.
 
 ## Running
 
@@ -75,8 +54,8 @@ uv run python scripts/fetch_chembl.py MIC
 uv run python scripts/fetch_targets.py mic
 ```
 
-The downloads take roughly half an hour in total: the 90 MB LOTUS export, 37,468 GBIF name lookups
-and 462,603 ChEMBL rows. All four scripts are resumable, so rerunning the same command after an
+The downloads take roughly half an hour: a 90 MB LOTUS export, 37,468 GBIF name lookups and
+462,603 ChEMBL rows. All four scripts are resumable, so rerunning the same command after an
 interruption skips what is already on disk. `fetch_targets.py` reads the activity files, so it has
 to run after `fetch_chembl.py`.
 
@@ -86,32 +65,72 @@ Then, from this folder:
 uv run jupyter lab
 ```
 
-or non-interactively:
+or non-interactively, in order:
 
 ```bash
-uv run jupyter nbconvert --to notebook --execute --inplace 01_data.ipynb
+for nb in 01_data 02_curation 03_features 04_models 05_results; do
+  uv run jupyter nbconvert --to notebook --execute --inplace $nb.ipynb
+done
 ```
 
-Notebook 01 takes about six minutes, most of it computing InChIKeys for 95,529 ChEMBL structures
-and RDKit descriptors for the chemical-space comparison.
+### How long each takes
 
-**Settings.** The first cell of each notebook holds its settings. These environment variables
-override the defaults:
+Measured on an M-series laptop, 10 cores. **Nothing here needs a GPU**: the models are tree
+ensembles and XGBoost runs on CPU with `tree_method="hist"`.
 
-| Variable | Effect |
-|---|---|
-| `ETHNOHACK_DATA_DIR` | where the data is downloaded to and read from (default `data/`) |
-| `ETHNOHACK_STANDARD_TYPE` | which activity readout to load (default `mic`) |
-| `ETHNOHACK_ACTIVE_UGML` | the activity reference line drawn in 01 (default 32) |
-| `ETHNOHACK_FIG_DIR` | where figures are written (default `figures/`) |
-| `ETHNOHACK_RESULTS_DIR` | where the run ledger is written (default `results/`) |
+| Notebook | Time | What dominates it |
+|---|---|---|
+| 01 | about 6 minutes | computing InChIKeys for 95,529 ChEMBL structures |
+| 02 | under a minute | reuses 01's InChIKey table instead of recomputing it |
+| 03 | about 2 to 3 minutes | featurising, then nine untuned forests for the screen |
+| 04 | **45 minutes or more** | 54 screen fits, then `ETHNOHACK_TRIALS` Optuna trials per pathogen |
+| 05 | about 10 minutes | featurising 97,503 screening compounds, then the similarity searches |
+
+**To see the pipeline work without the wait, set `ETHNOHACK_TRIALS=5`.** That single setting is
+the difference between ten minutes and over an hour in notebook 04. Nothing about the structure of
+the result changes, only how well tuned the final model is.
+
+### Settings
+
+The first cell of each notebook holds its settings as a `CONFIG` dict, and these environment
+variables override the defaults. Changing one and rerunning is a sensitivity analysis rather than
+an edit.
+
+| Variable | Default | Used by | Effect |
+|---|---|---|---|
+| `ETHNOHACK_DATA_DIR` | `data/` | all | where data is downloaded to and read from |
+| `ETHNOHACK_FIG_DIR` | `notebooks/figures/` | all | where figures are written |
+| `ETHNOHACK_RESULTS_DIR` | `results/` | 04, 05 | where the ledger and the shortlists are written |
+| `ETHNOHACK_STANDARD_TYPE` | `mic` | 01, 02 | which ChEMBL activity readout to load |
+| `ETHNOHACK_ACTIVE_UGML` | `32` | 01 | the activity reference line drawn on 01's distributions |
+| `ETHNOHACK_THRESHOLD_UM` | `32` | 02 | the primary activity threshold, in µM |
+| `ETHNOHACK_SENSITIVITY_UM` | `10` | 02 | the stricter threshold reported as a sensitivity check |
+| `ETHNOHACK_SEED` | `0` | 03, 04, 05 | seeds the splits, the models and the diversity selection |
+| `ETHNOHACK_TRIALS` | `30` | 04 | Optuna trials per pathogen; the main lever on runtime |
+| `ETHNOHACK_POOL` | `500` | 05 | how many top-scoring candidates the shortlist is drawn from |
+| `ETHNOHACK_SHORTLIST` | `50` | 05 | how many compounds reach the final shortlist per pathogen |
+| `ETHNOHACK_NOTE` | empty | all | a short description stored with the run in the ledger |
 
 ## Figures
 
 Written to [`figures/`](figures), prefixed with the notebook that made them, so the slide deck can
 take them straight from there. `pipeline/viz.py` holds the one style and the save helper.
 
+## The run ledger
+
+Every evaluation appends to `results/runs.jsonl` and rewrites `results/LEDGER.md`, carrying the git
+commit, a hash of the config, the full config and the metrics. Curation, splits, models and
+shortlists each record their own entry, so every number in the deck traces back to a commit and a
+configuration rather than to a notebook somebody ran once.
+
 ## Data
 
 No data is committed. [`../docs/data-sources.md`](../docs/data-sources.md) lists every source with
-its licence and the script that downloads it. No API key is needed for any of them.
+its licence and the script that downloads it. No API key is needed for any of them, so there is
+nothing to put in a `.env`.
+
+## History
+
+The handoff that specified notebook 02 has been carried out and moved to
+[`../docs/handoff-notebook-02.md`](../docs/handoff-notebook-02.md). It is kept as a record of what
+was decided and why, not as current instruction.

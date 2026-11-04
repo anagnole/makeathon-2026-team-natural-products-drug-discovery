@@ -54,6 +54,13 @@ def use_style():
 
 def save(fig, name):
     FIG_DIR.mkdir(parents=True, exist_ok=True)
+    suptitle = getattr(fig, "_suptitle", None)
+    if suptitle is not None and suptitle.get_text():
+        fig.tight_layout(rect=(0, 0, 1, 0.93))
+        suptitle.set_y(1.0)
+        suptitle.set_verticalalignment("bottom")
+    else:
+        fig.tight_layout()
     path = FIG_DIR / f"{name}.png"
     fig.savefig(path, bbox_inches="tight", dpi=160)
     return path
