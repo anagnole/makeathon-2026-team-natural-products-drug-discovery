@@ -1,0 +1,15 @@
+EXPLORATORY CANDIDATES, READ BEFORE USE
+
+Pathogen: Mycobacterium tuberculosis
+File: exploratory_mycobacterium_tuberculosis.csv
+
+These compounds sit OUTSIDE the model's applicability domain: their nearest
+training compound is further away than the 25th percentile of the plant
+holdout, which is the most distant set on which performance was measured.
+
+The scores in that file are NOT evidence of activity and must not be read as
+a ranking of candidates. They are published so that nothing was quietly
+deleted, not because they are actionable.
+
+Applicability-domain cutoff: Tanimoto 0.328
+The shortlist a chemist should work from is shortlist_<organism>.csv.

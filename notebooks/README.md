@@ -111,10 +111,27 @@ an edit.
 | `ETHNOHACK_SHORTLIST` | `50` | 05 | how many compounds reach the final shortlist per pathogen |
 | `ETHNOHACK_NOTE` | empty | all | a short description stored with the run in the ledger |
 
+**Use `uv sync` rather than an existing environment.** The processed parquet files are written by
+pyarrow 26, and an older reader rejects them with `Repetition level histogram size mismatch`,
+which looks like data corruption and is not. `pyproject.toml` floors pyarrow at 26 for that
+reason, and `uv.lock` pins the exact versions every number in these notebooks was produced with.
+
 ## Figures
 
 Written to [`figures/`](figures), prefixed with the notebook that made them, so the slide deck can
 take them straight from there. `pipeline/viz.py` holds the one style and the save helper.
+
+## What `results/` contains
+
+| File | What it is |
+|---|---|
+| `shortlist_<organism>.csv` | **the deliverable.** In-domain candidates only, ranked by model score |
+| `exploratory_<organism>.csv` | candidates outside the applicability domain, kept for transparency; their scores are not evidence of activity |
+| `exploratory_<organism>.README.txt` | why that file must not be read as a candidate list |
+| `LEDGER.md`, `runs.jsonl` | every run, with its commit, config hash, config and metrics |
+
+Both CSVs are plain comma-separated files with a single header row, readable with
+`pd.read_csv(path)` and nothing special.
 
 ## The run ledger
 
