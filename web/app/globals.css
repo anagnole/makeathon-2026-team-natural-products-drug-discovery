@@ -1,0 +1,306 @@
+@import "tailwindcss";
+
+/* ---------------------------------------------------------------------------
+   The microdilution read.
+   Ground is the colour of a resazurin well where nothing grew. The dye's pink
+   is held for growth, the negative read and everything outside the domain.
+   Straw is broth turbidity. Polystyrene light is ink and rim.
+--------------------------------------------------------------------------- */
+
+@theme {
+  --color-void: #050f2b;
+  --color-plate: #081a42;
+  --color-plate-raised: #0b2252;
+  --color-ink: #eaf1fc;
+  --color-ink-dim: #9fb4d8;
+  --color-ink-faint: #7c93bd;
+  --color-growth: #f0457e;
+  --color-broth: #e8b93f;
+  --color-rim: #d7e3f4;
+  /* Transmitted light through a clear well; turbidity mixes straw into it. */
+  --color-clear: #2566d6;
+
+  --font-sans: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-martian), ui-monospace, monospace;
+
+  --text-thesis: clamp(2.1rem, 3.7vw, 3.25rem);
+  --text-section: clamp(1.6rem, 2.6vw, 2.35rem);
+  /* Three registers and no more. The smallest is the floor for 1080p video. */
+  --text-body: 1rem;
+  --text-small: 0.875rem;
+  --text-legend: 0.75rem;
+
+}
+
+:root {
+  color-scheme: dark;
+  /* The plate's own measures, so every part shares one geometry. */
+  --well: 52px;
+  --well-gap: 10px;
+  --rim: color-mix(in srgb, var(--color-rim) 26%, transparent);
+  --hairline: color-mix(in srgb, var(--color-rim) 14%, transparent);
+  --read-line: 32.8%;
+}
+
+* {
+  min-width: 0;
+}
+
+html {
+  overflow-x: clip;
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+.prose {
+  font-size: var(--text-body);
+  line-height: 1.65;
+  color: var(--color-ink-dim);
+}
+
+body {
+  /* Styling the scrollbar makes Chrome reserve a classic gutter, which showed
+     up as a 13px phantom in the document's scroll width on narrow viewports.
+     Nothing is laid out there (verified with elementFromPoint across the page),
+     and `clip` removes the phantom without creating a scroll container the way
+     `hidden` would. */
+  overflow-x: clip;
+  background: var(--color-plate);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-synthesis-weight: none;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Browser surfaces are part of the world, not the browser's business. */
+::selection {
+  background: color-mix(in srgb, var(--color-broth) 34%, transparent);
+  color: var(--color-ink);
+}
+
+:root {
+  caret-color: var(--color-broth);
+  accent-color: var(--color-broth);
+  /* Standard properties only: the legacy ::-webkit-scrollbar rules added a
+     13px phantom to the document's scroll width on narrow viewports. */
+  scrollbar-color: color-mix(in srgb, var(--color-rim) 30%, transparent)
+    var(--color-void);
+  scrollbar-width: thin;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-broth);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+a {
+  color: var(--color-ink);
+  text-decoration-line: underline;
+  text-decoration-color: color-mix(in srgb, var(--color-broth) 62%, transparent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.22em;
+  transition: text-decoration-color 90ms steps(2, end);
+}
+a:hover {
+  text-decoration-color: var(--color-broth);
+}
+
+/* Measurements are data, so they are set in mono with tabular figures. */
+.body-text {
+  font-size: var(--text-body);
+}
+
+.small-text {
+  font-size: var(--text-small);
+}
+
+/* Mono is for things that are read character by character or compared column
+   by column: identifiers, SMILES, DOIs and figures. Never for prose. */
+.measure {
+  font-family: var(--font-mono);
+  /* Run ids, skeletons and SMILES are single unbreakable tokens. */
+  overflow-wrap: break-word;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+  letter-spacing: -0.02em;
+}
+
+.display {
+  font-stretch: 112%;
+  font-variation-settings: "wdth" 112;
+}
+
+/* Field labels. Uppercase at this size needs air between letters but not so
+   much that the word stops being a shape; 0.07em is where it still reads. */
+.legend {
+  font-size: var(--text-legend);
+  font-stretch: 94%;
+  font-variation-settings: "wdth" 94;
+  line-height: 1.25;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--color-ink-dim);
+  font-weight: 500;
+}
+
+.rule {
+  border: 0;
+  border-top: 1px solid var(--hairline);
+}
+
+/* --- The well ------------------------------------------------------------ */
+
+.well {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--color-void);
+  border: 1px solid var(--rim);
+  overflow: hidden;
+  /* Rim light off the polystyrene: an offset highlight, not a halo. */
+  box-shadow:
+    inset 0 1px 2px color-mix(in srgb, var(--color-rim) 20%, transparent),
+    0 1px 2px color-mix(in srgb, #000 40%, transparent);
+}
+
+/* The liquid. Height is the nearest-training Tanimoto; colour is turbidity
+   mixed from the predicted probability. Both are set per well as variables. */
+.well-liquid {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  height: calc(var(--level) * 100%);
+  background: color-mix(
+    in oklab,
+    var(--color-broth) calc(var(--turbidity) * 165%),
+    var(--color-clear)
+  );
+  /* The meniscus: the surface of the liquid catches the reader's light. */
+  border-top: 1px solid
+    color-mix(in srgb, var(--color-rim) 72%, transparent);
+}
+
+.well-empty .well-liquid {
+  display: none;
+}
+
+/* The read line: where the applicability domain stops, on every well. */
+.well::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  bottom: var(--read-line);
+  height: 1px;
+  background: color-mix(in srgb, var(--color-broth) 78%, transparent);
+  z-index: 2;
+}
+
+.well-empty::after {
+  background: color-mix(in srgb, var(--color-broth) 30%, transparent);
+}
+
+/* Outside the read: struck through, so the tier survives greyscale. */
+.well-struck .well-liquid {
+  background: color-mix(
+    in oklab,
+    var(--color-growth) calc(58% + var(--turbidity) * 34%),
+    var(--color-clear)
+  );
+}
+
+.well-struck::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  background: linear-gradient(
+    to bottom right,
+    transparent calc(50% - 0.5px),
+    var(--color-growth) calc(50% - 0.5px),
+    var(--color-growth) calc(50% + 0.5px),
+    transparent calc(50% + 0.5px)
+  );
+}
+
+/* A fingerprint twin of a training compound: the ring a reader inks by hand. */
+.well-twin {
+  border-color: var(--color-rim);
+  box-shadow:
+    inset 0 1px 2px color-mix(in srgb, var(--color-rim) 28%, transparent),
+    0 0 0 2px var(--color-plate),
+    0 0 0 3px var(--color-rim);
+}
+
+.well-button {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  border-radius: 50%;
+  transition: transform 90ms steps(2, end);
+}
+
+.well-button:hover .well,
+.well-button[data-read="true"] .well {
+  border-color: var(--color-rim);
+}
+
+.well-button[data-read="true"] {
+  transform: scale(1.14);
+  z-index: 4;
+}
+
+.well-button[data-read="true"] .well {
+  box-shadow:
+    inset 0 1px 2px color-mix(in srgb, var(--color-rim) 28%, transparent),
+    0 2px 6px color-mix(in srgb, #000 55%, transparent),
+    0 0 0 1px var(--color-broth);
+}
+
+.well-button:focus-visible {
+  outline-offset: 3px;
+}
+
+/* The plate reads itself once, column by column. */
+@media (prefers-reduced-motion: no-preference) {
+  .plate-reading .well-liquid {
+    animation: fill 240ms steps(2, end) backwards;
+    animation-delay: calc(var(--col) * 72ms);
+  }
+}
+
+@keyframes fill {
+  from {
+    height: 0%;
+  }
+}
+
+/* --- Structure drawing --------------------------------------------------- */
+
+.structure canvas,
+.structure svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* The list reserves the depiction's box before it is drawn, so a row never
+   changes height when its molecule arrives. */
+.structure[data-scale="inline"] {
+  height: 3rem;
+}
+
+.structure[data-scale="inline"] svg {
+  height: 100%;
+  width: 100%;
+}

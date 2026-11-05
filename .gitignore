@@ -224,3 +224,14 @@ data/
 
 # Environment
 .venv/
+
+# Keep the web app out of the Python .gitignore patterns above
+!web/lib/
+!web/lib/**
+!web/build/
+!web/public/
+
+# Impeccable review captures are large and regenerable
+.impeccable/review/
+.impeccable/mocks/
+.impeccable/questions/

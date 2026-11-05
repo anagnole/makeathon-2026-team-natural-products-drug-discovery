@@ -1,0 +1,413 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-05T00:00:00Z",
+  "title": "Design System: The Microdilution Read",
+  "extensions": {
+    "colorMeta": {
+      "plate": {
+        "role": "primary",
+        "displayName": "Resazurin Ground",
+        "canonical": "#081a42",
+        "tonalRamp": [
+          "#030b1f",
+          "#050f2b",
+          "#081a42",
+          "#0b2252",
+          "#143a85",
+          "#2a5cc0",
+          "#6d93dd",
+          "#c3d6f3"
+        ]
+      },
+      "void": {
+        "role": "primary",
+        "displayName": "Plate Edge Black-Blue",
+        "canonical": "#050f2b",
+        "tonalRamp": [
+          "#020716",
+          "#050f2b",
+          "#07173e",
+          "#0a2055",
+          "#10307b",
+          "#2051b4",
+          "#5f87d6",
+          "#bbd1f1"
+        ]
+      },
+      "plate-raised": {
+        "role": "primary",
+        "displayName": "Lifted Plate",
+        "canonical": "#0b2252",
+        "tonalRamp": [
+          "#040c22",
+          "#071634",
+          "#0b2252",
+          "#102c69",
+          "#17409a",
+          "#2b61cb",
+          "#7098e0",
+          "#c8daf5"
+        ]
+      },
+      "growth": {
+        "role": "secondary",
+        "displayName": "Growth Pink",
+        "canonical": "#f0457e",
+        "tonalRamp": [
+          "#2d0616",
+          "#4c0a26",
+          "#740f3a",
+          "#9c1650",
+          "#c42467",
+          "#f0457e",
+          "#f68aae",
+          "#fcd3e1"
+        ]
+      },
+      "broth": {
+        "role": "secondary",
+        "displayName": "Broth Straw",
+        "canonical": "#e8b93f",
+        "tonalRamp": [
+          "#2a1f05",
+          "#473409",
+          "#6b4f0e",
+          "#906a15",
+          "#bb8c20",
+          "#e8b93f",
+          "#f2d286",
+          "#faeec9"
+        ]
+      },
+      "clear": {
+        "role": "secondary",
+        "displayName": "Lit Liquid",
+        "canonical": "#2566d6",
+        "tonalRamp": [
+          "#06142e",
+          "#0a2150",
+          "#103275",
+          "#17459b",
+          "#1d55bb",
+          "#2566d6",
+          "#6e9ae8",
+          "#c4d8f7"
+        ]
+      },
+      "rim": {
+        "role": "neutral",
+        "displayName": "Polystyrene Light",
+        "canonical": "#d7e3f4",
+        "tonalRamp": [
+          "#121b2a",
+          "#1e2c45",
+          "#2f4466",
+          "#46608b",
+          "#6684b1",
+          "#8ea8cf",
+          "#b5c8e4",
+          "#d7e3f4"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Plate Ink",
+        "canonical": "#eaf1fc",
+        "tonalRamp": [
+          "#141c29",
+          "#223045",
+          "#344966",
+          "#4c678c",
+          "#6d88b0",
+          "#97add0",
+          "#c2d2ea",
+          "#eaf1fc"
+        ]
+      },
+      "ink-dim": {
+        "role": "neutral",
+        "displayName": "Dimmed Ink",
+        "canonical": "#9fb4d8",
+        "tonalRamp": [
+          "#0f1726",
+          "#1a2740",
+          "#2a3c5e",
+          "#3e557f",
+          "#5872a1",
+          "#7993bf",
+          "#9fb4d8",
+          "#cfdcee"
+        ]
+      },
+      "ink-faint": {
+        "role": "neutral",
+        "displayName": "Faint Ink",
+        "canonical": "#7c93bd",
+        "tonalRamp": [
+          "#0d1422",
+          "#17213a",
+          "#243356",
+          "#354875",
+          "#4b6194",
+          "#637cab",
+          "#7c93bd",
+          "#b5c4dc"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "thesis": {
+        "displayName": "Thesis",
+        "purpose": "The single page-opening claim. One per page, Archivo at wdth 112."
+      },
+      "section": {
+        "displayName": "Section",
+        "purpose": "Section headings and the active strain binomial. Full sentences, not labels."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Ledes and running argument, held to a 58ch measure."
+      },
+      "small": {
+        "displayName": "Small",
+        "purpose": "Chart captions, the read bar, slip field values."
+      },
+      "legend": {
+        "displayName": "Legend",
+        "purpose": "Uppercase field labels, column headers and plate coordinates at wdth 94. The floor of the system and the floor for 1080p video."
+      },
+      "measure": {
+        "displayName": "Measure",
+        "purpose": "Every measured or recorded value: numbers, hashes, Tanimoto, SMILES, DOI. Martian Mono with tabular figures."
+      }
+    },
+    "shadows": [
+      {
+        "name": "well-rest",
+        "value": "inset 0 1px 2px color-mix(in srgb, #d7e3f4 20%, transparent), 0 1px 2px color-mix(in srgb, #000 40%, transparent)",
+        "purpose": "The default well bore: specular highlight inside, 1px contact shadow outside. The only elevation in the system."
+      },
+      {
+        "name": "well-read",
+        "value": "inset 0 1px 2px color-mix(in srgb, #d7e3f4 28%, transparent), 0 2px 6px color-mix(in srgb, #000 55%, transparent), 0 0 0 1px #e8b93f",
+        "purpose": "The hovered or keyboard-focused well, paired with a scale(1.14) step."
+      },
+      {
+        "name": "twin-ring",
+        "value": "0 0 0 2px #081a42, 0 0 0 3px #d7e3f4",
+        "purpose": "The hand-inked ring marking a fingerprint twin of a training compound: a ground-coloured gap, then the ring."
+      }
+    ],
+    "motion": [
+      {
+        "name": "step-two",
+        "value": "90ms steps(2, end)",
+        "purpose": "Every state transition in the system: link underline, well scale, well rim. No easing curve."
+      },
+      {
+        "name": "column-read",
+        "value": "240ms steps(2, end), delay calc(var(--col) * 72ms)",
+        "purpose": "The plate reads itself once on load, column by column. Suppressed entirely under prefers-reduced-motion, which renders the plate already read."
+      },
+      {
+        "name": "tonal-cut",
+        "value": "90ms linear",
+        "purpose": "Strain-plate ground change on hover and selection. Switching strains is a hard cut, never a pan."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "md",
+        "value": "768px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px"
+      },
+      {
+        "name": "wide",
+        "value": "1400px"
+      }
+    ],
+    "notCanonized": [
+      "--ease-read (cubic-bezier(0.16, 1, 0.3, 1)) is declared in the @theme block of web/app/globals.css and referenced nowhere in the build. It is dead, not a motion token; the shipped motion grammar is step-only.",
+      "The direction contract specifies a 56px plate-edge strip, a ~64px thesis and a 90ms per-column plate read. The build ships a ~50px strip, a clamp(2.1rem, 3.7vw, 3.25rem) thesis and 72ms per column. The build is recorded; the contract is not."
+    ]
+  },
+  "components": [
+    {
+      "name": "Well",
+      "kind": "custom",
+      "refersTo": "well",
+      "description": "The system's primitive: one compound, liquid height is its nearest-training Tanimoto and turbidity is its predicted probability, with the domain cutoff drawn across it.",
+      "html": "<div class=\"ds-well\" style=\"--level:0.82;--turbidity:0.07\"><div class=\"ds-well-liquid\"></div></div>",
+      "css": ".ds-well { position: relative; width: 52px; aspect-ratio: 1; border-radius: 50%; background: #050f2b; border: 1px solid color-mix(in srgb, #d7e3f4 26%, transparent); overflow: hidden; box-shadow: inset 0 1px 2px color-mix(in srgb, #d7e3f4 20%, transparent), 0 1px 2px color-mix(in srgb, #000 40%, transparent); } .ds-well-liquid { position: absolute; inset-inline: 0; bottom: 0; height: calc(var(--level) * 100%); background: color-mix(in oklab, #e8b93f calc(var(--turbidity) * 165%), #2566d6); border-top: 1px solid color-mix(in srgb, #d7e3f4 72%, transparent); } .ds-well::after { content: \"\"; position: absolute; inset-inline: 0; bottom: 32.8%; height: 1px; background: color-mix(in srgb, #e8b93f 78%, transparent); z-index: 2; }"
+    },
+    {
+      "name": "Well, outside the read",
+      "kind": "custom",
+      "refersTo": "well-struck",
+      "description": "An out-of-domain candidate: liquid shifted into growth pink and a 1px diagonal strike, so the tier survives greyscale.",
+      "html": "<div class=\"ds-well ds-well-struck\" style=\"--level:0.2;--turbidity:0.22\"><div class=\"ds-well-liquid\"></div></div>",
+      "css": ".ds-well { position: relative; width: 52px; aspect-ratio: 1; border-radius: 50%; background: #050f2b; border: 1px solid color-mix(in srgb, #d7e3f4 26%, transparent); overflow: hidden; box-shadow: inset 0 1px 2px color-mix(in srgb, #d7e3f4 20%, transparent), 0 1px 2px color-mix(in srgb, #000 40%, transparent); } .ds-well-liquid { position: absolute; inset-inline: 0; bottom: 0; height: calc(var(--level) * 100%); border-top: 1px solid color-mix(in srgb, #d7e3f4 72%, transparent); } .ds-well-struck .ds-well-liquid { background: color-mix(in oklab, #f0457e calc(58% + var(--turbidity) * 34%), #2566d6); } .ds-well::after { content: \"\"; position: absolute; inset-inline: 0; bottom: 32.8%; height: 1px; background: color-mix(in srgb, #e8b93f 78%, transparent); z-index: 2; } .ds-well-struck::before { content: \"\"; position: absolute; inset: 0; z-index: 3; background: linear-gradient(to bottom right, transparent calc(50% - 0.5px), #f0457e calc(50% - 0.5px), #f0457e calc(50% + 0.5px), transparent calc(50% + 0.5px)); }"
+    },
+    {
+      "name": "Well button, read state",
+      "kind": "button",
+      "refersTo": "well-read",
+      "description": "A well under hover or keyboard focus: full polystyrene rim, a straw outline and a single two-frame scale step. Hover and focus give exactly the same read.",
+      "html": "<button class=\"ds-well-button\" type=\"button\" aria-label=\"Well A1, rank 1, inside the domain\"><span class=\"ds-well\" style=\"--level:0.98;--turbidity:0.09\"><span class=\"ds-well-liquid\"></span></span></button>",
+      "css": ".ds-well-button { display: block; padding: 0; border: 0; background: none; cursor: pointer; border-radius: 50%; transition: transform 90ms steps(2, end); } .ds-well { display: block; position: relative; width: 52px; aspect-ratio: 1; border-radius: 50%; background: #050f2b; border: 1px solid color-mix(in srgb, #d7e3f4 26%, transparent); overflow: hidden; box-shadow: inset 0 1px 2px color-mix(in srgb, #d7e3f4 20%, transparent), 0 1px 2px color-mix(in srgb, #000 40%, transparent); } .ds-well-liquid { position: absolute; inset-inline: 0; bottom: 0; height: calc(var(--level) * 100%); background: color-mix(in oklab, #e8b93f calc(var(--turbidity) * 165%), #2566d6); border-top: 1px solid color-mix(in srgb, #d7e3f4 72%, transparent); } .ds-well::after { content: \"\"; position: absolute; inset-inline: 0; bottom: 32.8%; height: 1px; background: color-mix(in srgb, #e8b93f 78%, transparent); z-index: 2; } .ds-well-button:hover .ds-well, .ds-well-button:focus-visible .ds-well { border-color: #d7e3f4; box-shadow: inset 0 1px 2px color-mix(in srgb, #d7e3f4 28%, transparent), 0 2px 6px color-mix(in srgb, #000 55%, transparent), 0 0 0 1px #e8b93f; } .ds-well-button:hover, .ds-well-button:focus-visible { transform: scale(1.14); } .ds-well-button:focus-visible { outline: 2px solid #e8b93f; outline-offset: 3px; }"
+    },
+    {
+      "name": "Well, fingerprint twin",
+      "kind": "custom",
+      "refersTo": "well-twin",
+      "description": "A compound sharing a Morgan fingerprint with a training compound: the ring a reader inks by hand, a ground-coloured gap then full polystyrene.",
+      "html": "<div class=\"ds-well ds-well-twin\" style=\"--level:0.99;--turbidity:0.05\"><div class=\"ds-well-liquid\"></div></div>",
+      "css": ".ds-well { position: relative; width: 52px; aspect-ratio: 1; border-radius: 50%; background: #050f2b; overflow: hidden; } .ds-well-liquid { position: absolute; inset-inline: 0; bottom: 0; height: calc(var(--level) * 100%); background: color-mix(in oklab, #e8b93f calc(var(--turbidity) * 165%), #2566d6); border-top: 1px solid color-mix(in srgb, #d7e3f4 72%, transparent); } .ds-well::after { content: \"\"; position: absolute; inset-inline: 0; bottom: 32.8%; height: 1px; background: color-mix(in srgb, #e8b93f 78%, transparent); z-index: 2; } .ds-well-twin { border: 1px solid #d7e3f4; box-shadow: inset 0 1px 2px color-mix(in srgb, #d7e3f4 28%, transparent), 0 0 0 2px #081a42, 0 0 0 3px #d7e3f4; }"
+    },
+    {
+      "name": "Strain Plate",
+      "kind": "nav",
+      "refersTo": "strain-plate",
+      "description": "The navigation of the system: three stacked plate labels, hairline-separated, carrying binomial, cell envelope and labelled counts. Selected lifts one tonal step and fills its dot.",
+      "html": "<div class=\"ds-strains\"><button class=\"ds-strain ds-strain-active\" type=\"button\" aria-pressed=\"true\"><span class=\"ds-strain-head\"><span class=\"ds-dot ds-dot-on\"></span><span class=\"ds-binomial\">Staphylococcus aureus</span></span><span class=\"ds-legend\">Gram-positive</span><span class=\"ds-counts\">58,191 labelled &middot; 1,424 from plants</span></button><button class=\"ds-strain\" type=\"button\" aria-pressed=\"false\"><span class=\"ds-strain-head\"><span class=\"ds-dot\"></span><span class=\"ds-binomial\">Escherichia coli</span></span><span class=\"ds-legend\">Gram-negative</span><span class=\"ds-counts\">43,099 labelled &middot; 874 from plants</span></button></div>",
+      "css": ".ds-strains { display: grid; gap: 1px; background: color-mix(in srgb, #d7e3f4 14%, transparent); max-width: 27rem; } .ds-strain { display: block; width: 100%; text-align: left; border: 0; cursor: pointer; background: #081a42; color: #eaf1fc; padding: 0.75rem 0.875rem; font-family: Archivo, ui-sans-serif, system-ui, sans-serif; transition: background-color 90ms linear; } .ds-strain:hover, .ds-strain-active { background: #0b2252; } .ds-strain:focus-visible { outline: 2px solid #e8b93f; outline-offset: 2px; } .ds-strain-head { display: flex; align-items: baseline; gap: 0.5rem; } .ds-dot { margin-top: 0.25rem; width: 8px; height: 8px; flex: 0 0 auto; border-radius: 50%; box-shadow: inset 0 0 0 1px #7c93bd; } .ds-dot-on { background: #e8b93f; box-shadow: none; } .ds-binomial { font-size: 1rem; line-height: 1.2; font-weight: 500; font-style: italic; } .ds-legend { display: block; margin-top: 0.375rem; font-size: 0.72rem; line-height: 1.2; letter-spacing: 0.1em; text-transform: uppercase; color: #7c93bd; font-weight: 500; font-variation-settings: \"wdth\" 94; } .ds-counts { display: block; margin-top: 0.25rem; font-family: \"Martian Mono\", ui-monospace, monospace; font-size: 0.72rem; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; color: #9fb4d8; }"
+    },
+    {
+      "name": "Read Bar",
+      "kind": "card",
+      "refersTo": "read-bar",
+      "description": "The line that changes while a well is hovered: coordinate, rank, skeleton, predicted score, nearest distance, source plant. The distance turns growth pink below the cutoff.",
+      "html": "<p class=\"ds-readbar\"><span class=\"ds-m\">A1</span><span class=\"ds-m ds-dim\">rank 1</span><span class=\"ds-m\">AOJJSUZBOXZQNB</span><span class=\"ds-m\"><span class=\"ds-faint\">predicted </span>0.909</span><span class=\"ds-m\"><span class=\"ds-faint\">nearest </span>0.986</span><span class=\"ds-dim ds-prose\">no source plant on record</span></p>",
+      "css": ".ds-readbar { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 1.25rem; row-gap: 0.25rem; margin: 0; padding: 0.625rem 0; border-top: 1px solid color-mix(in srgb, #d7e3f4 14%, transparent); border-bottom: 1px solid color-mix(in srgb, #d7e3f4 14%, transparent); background: #081a42; color: #eaf1fc; } .ds-m { font-family: \"Martian Mono\", ui-monospace, monospace; font-size: 0.84rem; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; } .ds-prose { font-family: Archivo, ui-sans-serif, system-ui, sans-serif; font-size: 0.84rem; } .ds-dim { color: #9fb4d8; } .ds-faint { color: #7c93bd; }"
+    },
+    {
+      "name": "Slip Field",
+      "kind": "card",
+      "refersTo": "slip",
+      "description": "One field of the determination slip: a legend label, a mono value, and the comparison that value must be read against. Never ships without the third line.",
+      "html": "<div class=\"ds-field\"><p class=\"ds-field-label\">Nearest training</p><p class=\"ds-field-value ds-out\">0.214</p><p class=\"ds-field-note\">below the read line at 0.328</p></div>",
+      "css": ".ds-field { max-width: 14rem; } .ds-field-label { margin: 0 0 0.375rem; font-family: Archivo, ui-sans-serif, system-ui, sans-serif; font-size: 0.72rem; line-height: 1.2; letter-spacing: 0.1em; text-transform: uppercase; color: #7c93bd; font-weight: 500; font-variation-settings: \"wdth\" 94; } .ds-field-value { margin: 0; font-family: \"Martian Mono\", ui-monospace, monospace; font-size: 1.5rem; line-height: 1; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; color: #eaf1fc; } .ds-field-value.ds-out { color: #f0457e; } .ds-field-note { margin: 0.375rem 0 0; font-family: Archivo, ui-sans-serif, system-ui, sans-serif; font-size: 0.72rem; line-height: 1.4; color: #9fb4d8; }"
+    },
+    {
+      "name": "Measured Scale",
+      "kind": "custom",
+      "refersTo": "read-bar",
+      "description": "The house chart: a 1px track, faint ticks, one 2px mark per value, one label per tier so labels can never collide, each anchored in proportion to its own position.",
+      "html": "<div class=\"ds-scale\"><div class=\"ds-track\"><span class=\"ds-tick\" style=\"left:20%\"></span><span class=\"ds-tick\" style=\"left:40%\"></span><span class=\"ds-tick\" style=\"left:60%\"></span><span class=\"ds-tick\" style=\"left:80%\"></span><span class=\"ds-mark ds-growth\" style=\"left:30%\"></span><span class=\"ds-mark ds-broth\" style=\"left:72%\"></span><span class=\"ds-mark ds-dim\" style=\"left:84%\"></span></div><div class=\"ds-labels\"><span class=\"ds-label ds-growth\" style=\"left:30%;top:0;transform:translateX(-30%)\">0.650 plant holdout</span><span class=\"ds-label ds-broth\" style=\"left:72%;top:1.15rem;transform:translateX(-72%)\">0.861 scaffold test</span><span class=\"ds-label ds-dim\" style=\"left:84%;top:2.3rem;transform:translateX(-84%)\">0.912 validation</span></div></div>",
+      "css": ".ds-scale { width: 100%; max-width: 34rem; } .ds-track { position: relative; height: 1px; background: color-mix(in srgb, #d7e3f4 14%, transparent); } .ds-tick { position: absolute; top: 0; height: 6px; width: 1px; background: color-mix(in srgb, #d7e3f4 14%, transparent); } .ds-mark { position: absolute; top: -6px; height: 14px; width: 2px; } .ds-labels { position: relative; margin-top: 0.5rem; height: 3.45rem; } .ds-label { position: absolute; font-family: \"Martian Mono\", ui-monospace, monospace; font-size: 0.72rem; line-height: 1; white-space: nowrap; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; } .ds-growth { background-color: #f0457e; color: #f0457e; } .ds-broth { background-color: #e8b93f; color: #e8b93f; } .ds-dim { background-color: #9fb4d8; color: #9fb4d8; } .ds-label.ds-growth, .ds-label.ds-broth, .ds-label.ds-dim { background-color: transparent; }"
+    },
+    {
+      "name": "Plate Edge",
+      "kind": "nav",
+      "refersTo": "plate-edge",
+      "description": "The top strip: event and track in the legend register at left, run provenance in mono at right, on plate-edge stock under a single hairline. Not sticky, not navigation.",
+      "html": "<header class=\"ds-edge\"><p class=\"ds-edge-left\">EthnoHack 2026 &middot; Track 2 &middot; Natural Products for Drug Discovery</p><p class=\"ds-edge-right\">commit e9dd118 &middot; 57 curation and split metrics reproduced on a second machine</p></header>",
+      "css": ".ds-edge { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; column-gap: 2rem; row-gap: 0.375rem; padding: 0.875rem 3rem; background: #050f2b; border-bottom: 1px solid color-mix(in srgb, #d7e3f4 14%, transparent); } .ds-edge-left { margin: 0; font-family: Archivo, ui-sans-serif, system-ui, sans-serif; font-size: 0.72rem; line-height: 1.2; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 500; font-variation-settings: \"wdth\" 94; color: #7c93bd; } .ds-edge-right { margin: 0; font-family: \"Martian Mono\", ui-monospace, monospace; font-size: 0.72rem; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; color: #7c93bd; }"
+    },
+    {
+      "name": "Link",
+      "kind": "custom",
+      "refersTo": "slip",
+      "description": "Plate ink with a straw underline at 62%, going full straw on hover in a single two-frame step. Focus is a straw ring and is never removed.",
+      "html": "<p class=\"ds-prose-l\">Activity labels from <a class=\"ds-link\" href=\"#\">ChEMBL</a> (CC BY-SA).</p>",
+      "css": ".ds-prose-l { font-family: Archivo, ui-sans-serif, system-ui, sans-serif; font-size: 0.84rem; line-height: 1.625; color: #9fb4d8; } .ds-link { color: #eaf1fc; text-decoration-line: underline; text-decoration-color: color-mix(in srgb, #e8b93f 62%, transparent); text-decoration-thickness: 1px; text-underline-offset: 0.22em; transition: text-decoration-color 90ms steps(2, end); } .ds-link:hover { text-decoration-color: #e8b93f; } .ds-link:focus-visible { outline: 2px solid #e8b93f; outline-offset: 2px; border-radius: 2px; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Plate Under Transmitted Light",
+    "overview": "The surface is a 96-well microdilution plate on a reader's bench, lit from behind. Nothing here is a dashboard dressed in lab colours: the ground is the colour of a resazurin well where nothing grew, the wells are circles of polystyrene with liquid in them, and a measurement is drawn as a physical quantity, a liquid level, a turbidity, a line across the glass, before it is ever written as a number. The register is clinical and unhurried. Density is high because a plate is dense, but every dense region is a grid, never a collage.\n\nThe system is dark only and committed, not accented. One colour carries the entire page; the three others are reserved, and their rarity is what makes them readable in a compressed video frame at 1080p. There are no gradients used as surface, no glow, no glass, no card stack, no rounded panels. Depth exists only where a real well has it: a 1px rim and the specular line the reader's lamp puts on the plastic.\n\nThe hardest commitment in the built system is that state is geometry. A candidate outside the applicability domain is struck through with a diagonal; a fingerprint twin wears an inked ring; an unmarked well is in-domain. Colour moves with those marks but never carries them alone, so the whole read survives greyscale and survives a bad projector.",
+    "keyCharacteristics": [
+      "One committed ground (#081a42) across every surface; no light mode exists.",
+      "State drawn in form, strike, ring, absence, never in hue alone.",
+      "Three type registers and no more, with the display scale set by Archivo's width axis rather than by weight.",
+      "Every measurement in Martian Mono with tabular figures; prose in Archivo.",
+      "Square everything except the well, which is a circle because a well is round.",
+      "Motion is step-only: steps(2, end), 72\u201390ms, no easing curve anywhere."
+    ],
+    "rules": [
+      {
+        "name": "The Committed Ground Rule",
+        "body": "#081a42 carries the page. A new surface does not get its own background colour; it gets a hairline and a heading. Only the plate edge (#050f2b) and the selected strain (#0b2252) may differ, and both are already spoken for.",
+        "section": "colors"
+      },
+      {
+        "name": "The Growth Reservation Rule",
+        "body": "Growth pink is never decoration, never a brand accent, never a hover. It appears only where a value cannot be banked: the out-of-domain tier, a value below the read line, and a missing record. If pink appears on a screen with no such value on it, the screen is wrong.",
+        "section": "colors"
+      },
+      {
+        "name": "The Form-Not-Hue Rule",
+        "body": "Every tier distinction ships as a mark as well as a colour: struck diagonal for outside the read, an inked ring for a fingerprint twin, no mark at all for in-domain. Print the screen in greyscale; if a tier disappears, it was never drawn.",
+        "section": "colors"
+      },
+      {
+        "name": "The Three Registers Rule",
+        "body": "Body, small, legend. Three sizes carry all non-display text, and a new component picks one of them rather than inventing a fourth. Display is two clamps and is reserved for the thesis and section heads.",
+        "section": "typography"
+      },
+      {
+        "name": "The Width-Axis Rule",
+        "body": "Scale is expressed through Archivo's width axis, not through a weight ramp: display sets wdth 112, legends set wdth 94. Weight moves between 400, 500 and 600 and no further; font-synthesis-weight is off, so a faked weight will simply not render.",
+        "section": "typography"
+      },
+      {
+        "name": "The Measurement-Is-Mono Rule",
+        "body": "If a string is a measured or recorded value, it is set in Martian Mono with tnum on. If it is an argument about those values, it is Archivo. There is no third case.",
+        "section": "typography"
+      },
+      {
+        "name": "The One Rail Rule",
+        "body": "Every section uses the same 27rem argument rail against a fluid evidence column. A new section does not get a new grid; it gets a heading, a lede, and whatever evidence belongs in the right-hand column.",
+        "section": "layout"
+      },
+      {
+        "name": "The Comparison-On-The-Line Rule",
+        "body": "No value ships without its comparison on the same axis or the same line: every score against its base rate, every metric against its ceiling, every predicted probability against its distance. A lone number is an incomplete component.",
+        "section": "layout"
+      },
+      {
+        "name": "The Transmitted-Light Rule",
+        "body": "Light in this world comes through the plate from behind. Shadows exist only on the well and only at 1\u20132px. No glow, no glass, no soft drop shadow under a panel, and no shadow at all on anything rectangular.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Step-Only Rule",
+        "body": "Every transition in this system is steps(2, end) at 72\u201390ms, or a 90ms linear colour change. There is no easing curve anywhere. The plate reads itself once on load, column by column at 72ms per column, and then stops; prefers-reduced-motion renders it already read.",
+        "section": "components"
+      },
+      {
+        "name": "The No-Overlay Rule",
+        "body": "The detail of a well opens in place, under the plate, across the full page width. Nothing in this system floats above the plate: no modal, no popover, no tooltip.",
+        "section": "components"
+      }
+    ],
+    "dos": [
+      "Do carry the ground #081a42 on every surface and separate panels with a 1px polystyrene hairline at 14%, not with a tinted box.",
+      "Do draw a measured quantity as a physical channel first, liquid height, turbidity, a mark on a shared axis, and write the number beside it in mono.",
+      "Do ship every value with its comparison on the same line or the same axis: score against base rate, metric against ceiling, probability against distance.",
+      "Do give every tier a mark as well as a colour, and check the screen in greyscale before shipping it.",
+      "Do keep type to the three registers (1 / 0.875 / 0.75rem) and express display scale through Archivo's width axis (wdth 112 display, 94 legend).",
+      "Do set every identifier, hash, Tanimoto, SMILES and DOI in Martian Mono with tabular figures.",
+      "Do state a defect in words, in growth pink, where the defect is, a missing plant, a missing DOI, a score that is not evidence.",
+      "Do replace the plate with a list below md rather than shrinking it."
+    ],
+    "donts": [
+      "Don't introduce a light mode or a second background colour. color-scheme is dark and the ground is the world.",
+      "Don't spend growth pink on anything that is not growth, out-of-domain, or a missing record, not on hover, not on a brand accent, not on an error that is merely an error.",
+      "Don't put a shadow, glow, blur or glass effect on anything rectangular. Depth belongs to the well's rim and meniscus and nowhere else.",
+      "Don't use a gradient as a surface. The only gradient in the system draws the 1px strike across an out-of-domain well.",
+      "Don't round a rectangle. Radius belongs to the well (50%) and to the 2px focus ring.",
+      "Don't add an easing curve. If a change needs to feel smooth, it is the wrong change.",
+      "Don't float detail over the plate in a modal, popover or tooltip.",
+      "Don't encode a tier in colour alone, and don't let a number appear without the thing it must be read against.",
+      "Don't add a fourth type size or a synthesised weight; font-synthesis-weight is off and a faked weight will not render."
+    ]
+  }
+}
