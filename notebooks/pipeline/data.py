@@ -11,6 +11,8 @@ PROCESSED = DATA / "processed"
 LOTUS_FILE = RAW / "lotus" / "260413_frozen_metadata.csv.gz"
 TAXONOMY_FILE = RAW / "gbif_organisms.parquet"
 TARGETS_FILE = RAW / "chembl_targets.parquet"
+SKELETON_CACHE = PROCESSED / "skeleton_cache.parquet"
+SKELETON_CACHE_META = PROCESSED / "skeleton_cache.meta.json"
 
 LOTUS_COLUMNS = [
     "structure_inchikey",
@@ -130,3 +132,56 @@ def save_processed(frame, name):
     path = PROCESSED / f"{name}.parquet"
     frame.to_parquet(path, index=False)
     return path
+
+
+def _write_skeleton_cache(mapping, signature):
+    import json
+
+    PROCESSED.mkdir(parents=True, exist_ok=True)
+    pd.DataFrame(
+        {"canonical_smiles": list(mapping), "skeleton": list(mapping.values())}
+    ).to_parquet(SKELETON_CACHE, index=False)
+    SKELETON_CACHE_META.write_text(json.dumps({"signature": signature}, indent=2))
+
+
+def canonical_skeleton_map(smiles_list, show_progress=True):
+    """SMILES to tautomer-canonical InChIKey skeleton, cached on disk across notebooks.
+
+    Canonicalising a tautomer costs tens of milliseconds and 02, 03 and 05 all need the same
+    keys, so the result is persisted. The cache carries the signature of the algorithm that
+    produced it and is rebuilt from scratch when that changes, because serving keys computed
+    by a previous algorithm is exactly the silent-staleness failure this key exists to prevent.
+    """
+    import json
+
+    from . import features
+
+    signature = features.enumerator_signature()
+    cache = {}
+    if SKELETON_CACHE.exists() and SKELETON_CACHE_META.exists():
+        stored = json.loads(SKELETON_CACHE_META.read_text()).get("signature")
+        if stored == signature:
+            saved = pd.read_parquet(SKELETON_CACHE)
+            cache = dict(zip(saved.canonical_smiles, saved.skeleton, strict=False))
+        elif show_progress:
+            print(f"  skeleton cache was built by {stored}, now {signature}: rebuilding",
+                  flush=True)
+
+    wanted = [s for s in dict.fromkeys(smiles_list) if isinstance(s, str) and s]
+    missing = [s for s in wanted if s not in cache]
+    if missing:
+        if show_progress:
+            print(f"  canonicalising {len(missing):,} structures not in the skeleton cache",
+                  flush=True)
+        fresh, counts = features.canonical_skeletons(
+            missing,
+            show_progress=show_progress,
+            on_batch=lambda partial: _write_skeleton_cache({**cache, **partial}, signature),
+        )
+        cache.update(fresh)
+        _write_skeleton_cache(cache, signature)
+        if show_progress:
+            print(f"  canonical {counts['canonical']:,}, fallback {counts['fallback']:,} "
+                  f"(enumeration threw, uncanonicalised key kept), "
+                  f"unparsed {counts['unparsed']:,}", flush=True)
+    return cache

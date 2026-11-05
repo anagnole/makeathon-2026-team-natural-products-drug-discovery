@@ -151,3 +151,44 @@ def label_table(frame, compound_column, relation_column, value_column, threshold
         if label is not None:
             labels[key] = label
     return labels
+
+
+def consensus_label(rows, threshold_um):
+    """Label one compound from the median of its measurements rather than the best one.
+
+    "Active wins over inactive" lets a single optimistic paper override many negative ones, and
+    27,000 of our compounds carry more than one measurement, so the collapse rule matters more
+    than the threshold does. The median observation is the defensible default: it needs half the
+    evidence to agree before a compound is called active.
+
+    Censored rows keep their relation, so a median that lands on a ">" row is read the way
+    binary_label reads it rather than being treated as an exact value.
+    """
+    ordered = sorted(
+        ((float(value), (relation.strip() if isinstance(relation, str) else "=") or "=")
+         for relation, value in rows),
+        key=lambda pair: pair[0],
+    )
+    if not ordered:
+        return None
+    value, relation = ordered[len(ordered) // 2]
+    return binary_label([(relation, value)], threshold_um)
+
+
+def straddles_threshold(rows, threshold_um):
+    """True when a compound's measurements fall on both sides of the threshold."""
+    values = [float(value) for _, value in rows]
+    return bool(values) and min(values) <= threshold_um < max(values)
+
+
+def consensus_table(frame, compound_column, relation_column, value_column, threshold_um):
+    labels = {}
+    conflicts = {}
+    grouped = frame.groupby(compound_column)
+    for key, rows in grouped[[relation_column, value_column]]:
+        pairs = list(rows.itertuples(index=False, name=None))
+        label = consensus_label(pairs, threshold_um)
+        if label is not None:
+            labels[key] = label
+        conflicts[key] = straddles_threshold(pairs, threshold_um)
+    return labels, conflicts
