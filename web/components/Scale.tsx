@@ -37,7 +37,15 @@ export default function Scale({
 
   return (
     <div>
-      <div className="relative h-px bg-[var(--hairline)]">
+      {/* The axis is laid down before the readings land on it, the same way
+          the pipeline's figures plot themselves on arrival. The track is its
+          own element rather than this box's background, so drawing it cannot
+          squash the marks standing on it. */}
+      <div className="relative h-px">
+        <span
+          aria-hidden="true"
+          className="draw-x absolute inset-0 bg-[var(--hairline)]"
+        />
         {ticks?.map((tick) => (
           <span
             key={tick.label}
@@ -46,15 +54,18 @@ export default function Scale({
             style={{ left: `${fraction(tick.at) * 100}%` }}
           />
         ))}
-        {marks.map((mark) => (
+        {marks.map((mark, tier) => (
           <span
             key={mark.label}
             aria-hidden="true"
-            className="absolute -top-1.5 h-3.5 w-0.5"
-            style={{
-              left: `${fraction(mark.at) * 100}%`,
-              background: TONES[mark.tone ?? "ink"],
-            }}
+            className="draw-dot absolute -top-1.5 h-3.5 w-0.5"
+            style={
+              {
+                left: `${fraction(mark.at) * 100}%`,
+                background: TONES[mark.tone ?? "ink"],
+                "--step": tier + 2,
+              } as React.CSSProperties
+            }
           />
         ))}
       </div>
@@ -68,8 +79,9 @@ export default function Scale({
           return (
             <span
               key={mark.label}
-              className="absolute text-[var(--text-small)] leading-none whitespace-nowrap"
+              className="draw-dot absolute text-[var(--text-small)] leading-none whitespace-nowrap"
               style={{
+                "--step": tier + 2,
                 left: `${at * 100}%`,
                 top: `${tier * 1.3}rem`,
                 // Anchored in proportion to its own position, so a label at the
@@ -77,7 +89,7 @@ export default function Scale({
                 // starts there. It can never push the page wider.
                 transform: `translateX(${-at * 100}%)`,
                 color: TONES[mark.tone ?? "ink"],
-              }}
+              } as React.CSSProperties}
             >
               <span className="measure">{mark.value}</span>{" "}
               <span className="text-ink-dim">{mark.label}</span>

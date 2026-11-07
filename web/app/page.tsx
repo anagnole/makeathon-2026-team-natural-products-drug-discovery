@@ -1,10 +1,16 @@
+import Link from "next/link";
 import Plate from "@/components/Plate";
+import Record from "@/components/Record";
 import Scale from "@/components/Scale";
+import Space from "@/components/Space";
+import Title from "@/components/Title";
 import {
+  loadChemicalSpace,
   loadPathogens,
   loadProvenance,
   loadSplitComparison,
   loadReproduction,
+  type ChemicalSpace,
   type Pathogen,
 } from "@/lib/data";
 import { count, dec, pct, tanimoto } from "@/lib/format";
@@ -16,20 +22,30 @@ export default function Home() {
   const reproduction = loadReproduction();
   const screened = pathogens[0].screened;
   const shortlisted = pathogens.reduce((n, p) => n + p.shortlist.length, 0);
+  const spaces = Object.fromEntries(
+    pathogens.map((p) => [p.slug, loadChemicalSpace(p.slug)]),
+  ) as Record<string, ChemicalSpace>;
 
   return (
     <>
       <PlateEdge provenance={provenance} reproduction={reproduction} />
 
       <main className="mx-auto max-w-[96rem] px-4 pb-24 sm:px-8 lg:px-12">
-        <section className="pt-10 lg:pt-12">
+        <Title pathogens={pathogens} />
+
+        <Problem pathogens={pathogens} />
+
+        <section id="screen" className="scroll-mt-6 pt-16 lg:pt-20">
           <Plate pathogens={pathogens}>
-            <h1 className="display text-thesis leading-[0.95] font-semibold tracking-[-0.035em] text-balance">
+            <h1 className="opens display text-thesis leading-[0.95] font-semibold tracking-[-0.035em] text-balance">
               {count(screened)} plant compounds screened.{" "}
-              <span className="text-broth">{shortlisted}</span> we would hand to
+              <span className="text-growth">{shortlisted}</span> we would hand to
               a chemist.
             </h1>
-            <p className="mt-5 max-w-[58ch] text-[var(--text-body)] leading-relaxed text-ink-dim">
+            <p
+              className="opens mt-5 max-w-[58ch] text-[var(--text-body)] leading-relaxed text-ink-dim"
+              style={{ "--open": 1 } as React.CSSProperties}
+            >
               Three bacterial pathogens, one model each. Each model learns
               from published MIC measurements in ChEMBL, then scores plant
               compounds from LOTUS that nobody has tested. Every score here is
@@ -41,14 +57,145 @@ export default function Home() {
 
         <Ladder pathogens={pathogens} />
         <Distance pathogens={pathogens} />
+        <Map pathogens={pathogens} spaces={spaces} />
         <Yield pathogens={pathogens} />
         <Biology pathogens={pathogens} />
         <Negatives split={split} />
         <Limits pathogens={pathogens} provenance={provenance} reproduction={reproduction} />
+        <Next pathogens={pathogens} />
+        <Credits provenance={provenance} />
       </main>
 
       <PlateFoot />
+      {/* Press R to walk the pitch's running order from the keyboard. */}
+      <Record />
     </>
+  );
+}
+
+/**
+ * What the thing is for, and what we would do with more than a week. Written
+ * to be said out loud at the end of a pitch, which is why it is four short
+ * claims and not a roadmap.
+ */
+function Next({ pathogens }: { pathogens: Pathogen[] }) {
+  const best = pathogens.reduce((a, b) =>
+    b.enrichmentTop5 > a.enrichmentTop5 ? b : a,
+  );
+
+  const items = [
+    {
+      title: "What a laboratory does with it tomorrow",
+      body: `Fifty compounds, each with a source plant, a reference and a distance, is a bench queue rather than a literature search. At ${dec(best.enrichmentTop5, 2)}× enrichment on ${best.short}, twenty syntheses expect several hits where random expects one. None of this has been near a laboratory yet.`,
+    },
+    {
+      title: "The protein layer we could not build",
+      body: "99.6% of the MIC rows are whole-organism, so this predicts growth inhibition and says nothing about mechanism. Protein-level activity exists in ChEMBL under IC50 and Ki: a separate, smaller download, and the thing that would turn a shortlist into a hypothesis about a target.",
+    },
+    {
+      title: "The measurement that would settle it",
+      body: "Every number here is retrospective. The honest next step is not a fourth pathogen. It is putting ten of these on a real plate and publishing the hit rate next to the predicted one, including if it is worse.",
+    },
+    {
+      title: "Whose knowledge this is",
+      body: "The plant records come from published literature, and traditional knowledge sits behind many of them. Anything built on this carries the Nagoya Protocol and Local Contexts as a condition of using the data, not as a footnote.",
+    },
+  ];
+
+  return (
+    <Section
+      id="impact"
+      title="What this is for, and what we would do next."
+      lede="A screen is only worth the lab time it saves, so the claim has to be the size of the evidence."
+    >
+      <ol className="grid gap-x-10 gap-y-7 sm:grid-cols-2">
+        {items.map((item, i) => (
+          <li
+            key={item.title}
+            className="draw-dot border-t border-[var(--hairline)] pt-4"
+            style={{ "--step": i } as React.CSSProperties}
+          >
+            <h3 className="text-base leading-tight font-medium text-balance">
+              {item.title}
+            </h3>
+            <p className="mt-2.5 text-[var(--text-small)] leading-relaxed text-ink-dim">
+              {item.body}
+            </p>
+          </li>
+        ))}
+      </ol>
+    </Section>
+  );
+}
+
+/**
+ * The closing frame. Who built it, what it was built on, and what was
+ * declared. It is the last thing said on camera, so it carries the licences
+ * and the AI disclosure rather than leaving them to the footer alone.
+ */
+function Credits({
+  provenance,
+}: {
+  provenance: ReturnType<typeof loadProvenance>;
+}) {
+  const people = ["Leonidas Anagnou", "Eleni Nasopoulou"];
+
+  return (
+    <Section
+      id="credits"
+      title="Who built it, and what it stands on."
+      lede="Two people, one week, one repository. Every number here is read at build time from a committed result file."
+    >
+      <div>
+        <ul className="grid gap-x-10 gap-y-4 sm:grid-cols-2">
+          {people.map((name, i) => (
+            <li
+              key={name}
+              className="draw-dot display text-section leading-tight font-medium tracking-[-0.02em]"
+              style={{ "--step": i } as React.CSSProperties}
+            >
+              {name}
+            </li>
+          ))}
+        </ul>
+
+        <p className="mt-7 border-t border-[var(--hairline)] pt-5 text-[var(--text-small)] leading-relaxed text-ink-dim">
+          Both at the School of Electrical and Computer Engineering, National
+          Technical University of Athens. Run{" "}
+          <span className="measure">{provenance.runId.split("_")[0]}</span>,
+          commit <span className="measure">{provenance.commit}</span>, config{" "}
+          <span className="measure">{provenance.configHash}</span>.
+        </p>
+
+        <dl className="mt-7 grid gap-x-10 gap-y-6 border-t border-[var(--hairline)] pt-5 sm:grid-cols-3">
+          <div>
+            <dt className="legend mb-2">Data</dt>
+            <dd className="text-[var(--text-small)] leading-relaxed text-ink-dim">
+              Activity labels from ChEMBL (CC BY-SA). The plant-to-compound edge
+              from LOTUS (CC0), cross-checked against GBIF for which organisms
+              are plants. NPASS was evaluated and dropped: its MIC table is a
+              copy of ChEMBL, so ChEMBL is cited directly.
+            </dd>
+          </div>
+          <div>
+            <dt className="legend mb-2">Built with</dt>
+            <dd className="text-[var(--text-small)] leading-relaxed text-ink-dim">
+              Python, RDKit, scikit-learn and XGBoost for the pipeline; Next.js
+              and Tailwind for this surface; smiles-drawer for every structure,
+              drawn in the browser from the canonical SMILES.
+            </dd>
+          </div>
+          <div>
+            <dt className="legend mb-2">Generative AI</dt>
+            <dd className="text-[var(--text-small)] leading-relaxed text-ink-dim">
+              AI assistance was used while writing the pipeline, this interface
+              and parts of the analysis. Every number, method and claim is ours
+              to defend, and each one is traceable to a committed result file.
+            </dd>
+          </div>
+        </dl>
+      </div>
+    </Section>
   );
 }
 
@@ -63,8 +210,11 @@ function PlateFoot() {
         <div>
           <h2 className="legend mb-2.5">The code behind this page</h2>
           <p className="text-[var(--text-small)] leading-relaxed text-ink-dim">
-            Notebooks, pipeline, run ledger and this interface are in one
-            repository, under MIT.{" "}
+            <Link href="/pipeline/">
+              The whole pipeline is written out stage by stage
+            </Link>
+            , from the question to this page. Notebooks, pipeline, run ledger and
+            this interface are in one repository, under MIT.{" "}
             <a
               className="break-all"
               href="https://github.com/anagnole/makeathon-2026-team-natural-products-drug-discovery"
@@ -119,7 +269,8 @@ function PlateEdge({
             front of the argument. The same facts are stated in full further
             down, under how to reproduce this page. */}
         <p className="hidden text-[var(--text-legend)] text-ink-dim sm:block">
-          commit <span className="measure">{provenance.commit}</span>
+          <Link href="/pipeline/">How it was built</Link> · commit{" "}
+          <span className="measure">{provenance.commit}</span>
           <span className="hidden [@media(min-width:1400px)]:inline">
             {" "}
             · {reproduction.metrics} curation and split metrics reproduced on a
@@ -132,16 +283,30 @@ function PlateEdge({
 }
 
 function Section({
+  id,
   title,
   lede,
   children,
 }: {
+  /** Also the beat anchor record mode scrolls to. See components/Record.tsx. */
+  id: string;
   title: string;
   lede: string;
   children: React.ReactNode;
 }) {
   return (
-    <section className="mt-24 border-t border-[var(--hairline)] pt-10 lg:mt-32">
+    /* The rule that opens a section is drawn, not simply present: it is the
+       same hairline the plate's own boundary is made of, and it arrives the
+       same way. It is a span rather than a border because a border cannot be
+       scaled out of nothing. */
+    <section
+      id={id}
+      className="relative mt-24 scroll-mt-6 pt-10 lg:mt-32"
+    >
+      <span
+        aria-hidden="true"
+        className="draw-x absolute inset-x-0 top-0 h-px bg-[var(--hairline)]"
+      />
       <div className="grid gap-x-14 gap-y-6 lg:grid-cols-[minmax(0,27rem)_minmax(0,1fr)]">
         <div>
           <h2 className="display text-section leading-tight font-semibold tracking-[-0.025em] text-balance">
@@ -178,8 +343,9 @@ function Row({
 function Ladder({ pathogens }: { pathogens: Pathogen[] }) {
   return (
     <Section
+      id="ladder"
       title="The same model, read three ways. Only the last one answers the question."
-      lede="Hold out random compounds and the model looks strong. Hold out whole chemical scaffolds and it holds up. Hold out every plant-derived compound, which is what a plant screen actually asks of it, and it drops by a sixth. The third number is the honest one, and it is the only one that was measured on the task in the title of this project."
+      lede="Hold out random compounds and the model looks strong. Hold out every plant-derived compound, which is what a plant screen actually asks of it, and it drops by a sixth."
     >
       <div>
         {pathogens.map((p) => (
@@ -223,13 +389,11 @@ function Ladder({ pathogens }: { pathogens: Pathogen[] }) {
           </Row>
         ))}
         <p className="prose mt-6 max-w-[76ch] border-t border-[var(--hairline)] pt-5">
-          The scores above are AUROC: the chance the model ranks a random active
-          compound above a random inactive one, where 0.5 is a coin flip. Each
-          interval comes from 2,000 stratified bootstrap resamples, so every drop
-          is larger than the uncertainty around it. No chemical scaffold appears
-          on both sides of the scaffold split either: the measured overlap is
-          exactly <span className="measure text-ink">0.000</span>. That is
-          necessary and nowhere near sufficient, which is the next panel.
+          AUROC is the chance the model ranks a random active above a random
+          inactive, where 0.5 is a coin flip; intervals are 2,000 bootstrap
+          resamples. Scaffold overlap across the split is exactly{" "}
+          <span className="measure text-ink">0.000</span>, which is necessary
+          and nowhere near sufficient.
         </p>
       </div>
     </Section>
@@ -239,8 +403,9 @@ function Ladder({ pathogens }: { pathogens: Pathogen[] }) {
 function Distance({ pathogens }: { pathogens: Pathogen[] }) {
   return (
     <Section
+      id="distance"
       title="Holding out ring skeletons is an easier test than it sounds, and the distances say why."
-      lede="Removing shared ring skeletons removes none of the resemblance that matters. The median held-out test compound still has a close neighbour in the training set; the median plant compound sits far further out. The model was never asked to reach that far until the plant holdout asked it."
+      lede="Removing shared ring skeletons removes none of the resemblance that matters. The median plant compound sits far further out than the median test compound."
     >
       <div>
         {pathogens.map((p) => (
@@ -293,17 +458,116 @@ function Distance({ pathogens }: { pathogens: Pathogen[] }) {
   );
 }
 
+/**
+ * Why any of this is worth doing, in the numbers the run itself produced. The
+ * claim is not that plants are an untapped miracle; it is the narrower and
+ * checkable one that the measured record barely covers them, so the compounds
+ * worth testing cannot be found by looking them up.
+ */
+function Problem({ pathogens }: { pathogens: Pathogen[] }) {
+  const widest = Math.max(...pathogens.map((p) => p.labelled));
+
+  return (
+    <Section
+      id="problem"
+      title="Medicine has measured a great deal of chemistry against these three organisms. Almost none of it came from a plant."
+      lede="Published MIC measurements are what a model like this can learn from. The plant-derived share of them is a rounding error."
+    >
+      <div>
+        {pathogens.map((p, row) => (
+          <Row key={p.slug} pathogen={p}>
+            <div className="flex items-center gap-4">
+              {/* One scale for all three: the grey track is this pathogen's
+                  measured set against the largest of them, and the plant share sits
+                  inside it. A bar per row scaled to its own width would make
+                  three different percentages look identical. */}
+              <div className="h-5 flex-1">
+                <div
+                  className="draw-x relative h-full bg-[color-mix(in_srgb,var(--color-ink-faint)_38%,transparent)]"
+                  style={
+                    {
+                      width: `${(p.labelled / widest) * 100}%`,
+                      "--step": row,
+                    } as React.CSSProperties
+                  }
+                >
+                  <span
+                    aria-hidden="true"
+                    className="absolute inset-y-0 left-0 bg-broth"
+                    style={{
+                      width: `${(p.plantLabelled / p.labelled) * 100}%`,
+                      minWidth: "2px",
+                    }}
+                  />
+                </div>
+              </div>
+              <p className="measure w-28 shrink-0 text-right text-[var(--text-small)]">
+                {pct(p.plantLabelled / p.labelled, 1)}
+              </p>
+            </div>
+            <p className="mt-2 text-[var(--text-small)] leading-relaxed text-ink-dim">
+              <span className="measure text-ink">
+                {count(p.plantLabelled)}
+              </span>{" "}
+              plant-derived of{" "}
+              <span className="measure">{count(p.labelled)}</span> measured
+              compounds.
+            </p>
+          </Row>
+        ))}
+        <p className="prose mt-6 max-w-[76ch] border-t border-[var(--hairline)] pt-5">
+          Against that sits{" "}
+          <span className="measure text-ink">
+            {count(pathogens[0].screened)}
+          </span>{" "}
+          plant structures with no measurement against any of these three. The
+          literature cannot be searched for an experiment nobody has run, so
+          ranking them is the only move left, and it is only worth anything if
+          it says where it stops being trustworthy.
+        </p>
+      </div>
+    </Section>
+  );
+}
+
+/**
+ * The one place on this page where distance is a picture. It is also the one
+ * figure that argues against itself, which is why it sits here, directly after
+ * the panel that establishes distance as the thing that matters.
+ */
+function Map({
+  pathogens,
+  spaces,
+}: {
+  pathogens: Pathogen[];
+  spaces: Record<string, ChemicalSpace>;
+}) {
+  return (
+    <Section
+      id="map"
+      title="The chemistry medicine has measured, and how little of it ever came from a plant."
+      lede="Faint points are compounds with a published MIC against the plate on view. The brighter ones a plant made. Rings are where this run's candidates fell."
+    >
+      <Space pathogens={pathogens} spaces={spaces} />
+    </Section>
+  );
+}
+
 function Yield({ pathogens }: { pathogens: Pathogen[] }) {
   return (
     <Section
+      id="yield"
       title="What this buys a lab: two to five times the hit rate of picking at random."
-      lede="Precision at the top of the list is the number a chemist spends money against, because the candidate pool is effectively unlimited and a wasted synthesis is the cost that matters. Read each one against the base rate beside it: the share of held-out plant compounds that are active at all."
+      lede="Precision at the top of the list is the number a chemist spends money against. Read each one against the base rate beside it."
     >
       <div>
         {pathogens.map((p) => (
           <Row key={p.slug} pathogen={p}>
             <dl className="grid grid-cols-2 gap-x-8 gap-y-5 sm:grid-cols-4">
-              <div>
+              <div
+                className="draw-dot"
+                style={{ "--step": 0 } as React.CSSProperties}
+              >
                 <dt className="legend mb-1.5">Precision at top 10%</dt>
                 <dd className="measure text-xl leading-none">
                   {pct(p.plantPrecisionAt10)}
@@ -316,7 +580,10 @@ function Yield({ pathogens }: { pathogens: Pathogen[] }) {
                   </span>
                 </dd>
               </div>
-              <div>
+              <div
+                className="draw-dot"
+                style={{ "--step": 1 } as React.CSSProperties}
+              >
                 <dt className="legend mb-1.5">Enrichment, top 5%</dt>
                 <dd className="measure text-xl leading-none text-broth">
                   {dec(p.enrichmentTop5, 2)}&times;
@@ -326,7 +593,10 @@ function Yield({ pathogens }: { pathogens: Pathogen[] }) {
                   rate
                 </dd>
               </div>
-              <div>
+              <div
+                className="draw-dot"
+                style={{ "--step": 2 } as React.CSSProperties}
+              >
                 <dt className="legend mb-1.5">Precision, top 5%</dt>
                 <dd className="measure text-xl leading-none">
                   {pct(p.precisionTop5)}
@@ -335,7 +605,10 @@ function Yield({ pathogens }: { pathogens: Pathogen[] }) {
                   {Math.round(p.precisionTop5 * 20)} of every 20 syntheses
                 </dd>
               </div>
-              <div>
+              <div
+                className="draw-dot"
+                style={{ "--step": 3 } as React.CSSProperties}
+              >
                 <dt className="legend mb-1.5">On the scaffold test</dt>
                 <dd className="measure text-xl leading-none text-ink-dim">
                   {pct(p.testPrecisionAt10)}
@@ -373,8 +646,9 @@ function Biology({ pathogens }: { pathogens: Pathogen[] }) {
 
   return (
     <Section
+      id="biology"
       title="The chemistry the model prefers tracks each pathogen’s cell envelope, and nobody told it about cell envelopes."
-      lede="Three envelopes were chosen on purpose so that this comparison would say something. It does: the acid-fast, waxy-walled pathogen draws lipophilic alkaloids and terpenoids, the Gram-negative one draws the polar and amphiphilic chemistry its porins pass, and the Gram-positive one draws phenolics. The model saw fingerprints and descriptors, never a wall. Read it as a hypothesis worth testing, not a finding: it partly reflects which compounds LOTUS has annotated."
+      lede="Three envelopes, chosen so this comparison would say something. The acid-fast list draws alkaloids and terpenoids, the Gram-negative one the polar chemistry its porins pass. The model was never given a cell wall."
     >
       <div>
         <div className="grid grid-cols-[minmax(0,1fr)_repeat(3,4.4rem)] gap-x-2.5 sm:grid-cols-[minmax(0,1fr)_repeat(3,6.5rem)] sm:gap-x-5">
@@ -384,7 +658,7 @@ function Biology({ pathogens }: { pathogens: Pathogen[] }) {
               {p.short}
             </span>
           ))}
-          {matrix.map(({ pathway, counts }) => (
+          {matrix.map(({ pathway, counts }, row) => (
             <div key={pathway} className="col-span-4 grid grid-cols-subgrid border-t border-[var(--hairline)] py-2.5">
               <span className="self-center text-[var(--text-small)] leading-snug">
                 {pathway}
@@ -394,12 +668,26 @@ function Biology({ pathogens }: { pathogens: Pathogen[] }) {
                   key={pathogens[i].slug}
                   className="flex items-center justify-end gap-2 self-center"
                 >
+                  {/* Each bar grows from its own baseline as the figure comes
+                      into view, one row behind the last, so the matrix is
+                      plotted down the page rather than asserted. */}
                   <span
                     aria-hidden="true"
-                    className="h-2.5 bg-broth"
-                    style={{ width: `${(n / peak) * 100}%`, minWidth: n ? "2px" : "0" }}
+                    className="draw-x h-2.5 bg-broth"
+                    style={
+                      {
+                        width: `${(n / peak) * 100}%`,
+                        minWidth: n ? "2px" : "0",
+                        "--step": row,
+                      } as React.CSSProperties
+                    }
                   />
-                  <span className="measure w-5 shrink-0 text-right text-[var(--text-legend)]">
+                  <span
+                    /* Martian Mono is wide: two digits do not fit a 20px box,
+                       and a count that wraps to two lines reads as two numbers. */
+                    className="draw-dot measure w-6 shrink-0 text-right whitespace-nowrap text-[var(--text-legend)]"
+                    style={{ "--step": row + 1 } as React.CSSProperties}
+                  >
                     {n}
                   </span>
                 </span>
@@ -408,12 +696,9 @@ function Biology({ pathogens }: { pathogens: Pathogen[] }) {
           ))}
         </div>
         <p className="prose mt-5 max-w-[76ch] border-t border-[var(--hairline)] pt-5">
-          Counts of the 50 in-domain candidates per pathogen carrying each
-          biosynthetic pathway, as classified in LOTUS. A compound with two
-          pathways is counted under both, so rows do not sum to 50. The plant
-          families behind these lists concentrate in{" "}
-          <em>Asteraceae</em> and <em>Fabaceae</em>, two of the richest families
-          in the ethnopharmacological record.
+          Counts of the 50 candidates per pathogen carrying each pathway, as
+          classified in LOTUS. A compound with two pathways counts under both,
+          so rows do not sum to 50.
         </p>
       </div>
     </Section>
@@ -423,8 +708,9 @@ function Biology({ pathogens }: { pathogens: Pathogen[] }) {
 function Negatives({ split }: { split: ReturnType<typeof loadSplitComparison> }) {
   return (
     <Section
+      id="negatives"
       title="The result we set out to find did not replicate, so it is reported as a negative."
-      lede="The original plan was to show that holding out whole plant families is harder than holding out scaffolds, a more honest split for an ethnopharmacology screen. Measured four separate times the direction is usually right and the magnitude never settles, with a repeat-to-repeat spread wider than the effect. It stays in as a negative result rather than a contribution."
+      lede="We set out to show that holding out whole plant families is harder than holding out scaffolds. Measured four times, the magnitude never settles."
     >
       <div>
         <Scale
@@ -470,22 +756,19 @@ function Negatives({ split }: { split: ReturnType<typeof loadSplitComparison> })
           {split.repeats} repeats.
         </p>
         <ul className="prose mt-7 max-w-[76ch] space-y-4 border-t border-[var(--hairline)] pt-5">
-          <li>
-            Regularisation does not close the plant gap. Sweeping the minimum
-            leaf size across 1, 4 and 16 made the plant-holdout AUROC fall
-            monotonically on all three pathogens, which rules out the obvious
-            objection that the drop is a tuning artefact.
+          <li className="draw-dot" style={{ "--step": 0 } as React.CSSProperties}>
+            Regularisation does not close the gap. Minimum leaf size swept
+            across 1, 4 and 16 made plant-holdout AUROC fall monotonically on
+            all three, so the drop is not a tuning artefact.
           </li>
-          <li>
-            Tuning for AUPRC instead of AUROC changed nothing at equal budget:
-            one inconsistent win in three, inside the noise.
+          <li className="draw-dot" style={{ "--step": 1 } as React.CSSProperties}>
+            Tuning for AUPRC instead of AUROC changed nothing at equal
+            budget: one inconsistent win in three, inside the noise.
           </li>
-          <li>
-            Calibration does not transport across a prevalence shift. The Platt
-            fit is made on a validation partition where 35–55% of compounds are
-            active and then applied to plant holdouts at 9–25%, and on two of
-            three pathogens the Brier score gets worse. It is reported, not
-            hidden.
+          <li className="draw-dot" style={{ "--step": 2 } as React.CSSProperties}>
+            Calibration does not transport across a prevalence shift. Fitted
+            at 35–55% active, applied at 9–25%, and on two of three the Brier
+            score gets worse.
           </li>
         </ul>
       </div>
@@ -511,8 +794,9 @@ function Limits({
 
   return (
     <Section
+      id="limits"
       title="What is wrong with this shortlist, in our own words."
-      lede="A screen that only reports its wins is not a result. These are the defects we know about in the files on this page, stated here because a reader who finds them unaided has every reason to distrust the rest."
+      lede="A screen that only reports its wins is not a result. These are the defects we know about in the files on this page."
     >
       <div className="prose max-w-[76ch] space-y-5 text-ink">
         <p>

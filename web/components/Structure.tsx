@@ -8,18 +8,18 @@ import { useEffect, useRef, useState } from "react";
  * drawn in the surface's own palette rather than a library default.
  */
 const THEME = {
-  C: "#eaf1fc",
-  N: "#7fb2e8",
-  O: "#f0457e",
-  S: "#e8b93f",
-  P: "#e8b93f",
-  F: "#9fb4d8",
-  CL: "#9fb4d8",
-  BR: "#9fb4d8",
-  I: "#9fb4d8",
-  B: "#9fb4d8",
-  SI: "#9fb4d8",
-  H: "#7c93bd",
+  C: "#eef3fc",
+  N: "#6f9fe0",
+  O: "#e8341f",
+  S: "#a9c6e8",
+  P: "#a9c6e8",
+  F: "#93a7c4",
+  CL: "#93a7c4",
+  BR: "#93a7c4",
+  I: "#93a7c4",
+  B: "#93a7c4",
+  SI: "#93a7c4",
+  H: "#6e84a6",
   BACKGROUND: "transparent",
 };
 

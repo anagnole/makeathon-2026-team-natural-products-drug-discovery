@@ -12,6 +12,13 @@ const ROWS = 8;
 const SLOTS = COLUMNS * ROWS;
 const ROW_LETTERS = "ABCDEFGH".split("");
 
+/** One tick per column, matching --read-tick in globals.css. The head, the
+ *  liquid and the read bar all count in it, so the bar never reports a column
+ *  the head has not reached. */
+const COLUMN_MS = 96;
+/** The fill of the last column, plus the rule drawing itself after it. */
+const READ_TAIL_MS = 560;
+
 /** Two tiers, two grids, so a grid never has a rule for a child. */
 const TIERS = [
   { label: "Shortlist plate, inside the read", from: 0, to: 5, rule: false },
@@ -54,6 +61,9 @@ export default function Plate({
   const [slug, setSlug] = useState(pathogens[0].slug);
   const [readIndex, setReadIndex] = useState(0);
   const [reading, setReading] = useState(true);
+  /** Bumped to start a read. It is also the stage's React key, which is what
+   *  restarts the CSS: an animation only replays if the element is new. */
+  const [readToken, setReadToken] = useState(0);
   const grid = useRef<HTMLDivElement>(null);
 
   const pathogen = pathogens.find((p) => p.slug === slug) ?? pathogens[0];
@@ -65,12 +75,92 @@ export default function Plate({
 
   const read = slots[readIndex]?.compound ?? pathogen.shortlist[0];
 
-  // The plate reads itself once, then stops; switching strains is a hard cut
-  // and does not replay the read.
-  useEffect(() => {
-    const timer = window.setTimeout(() => setReading(false), 1400);
-    return () => window.clearTimeout(timer);
+  const startRead = useCallback(() => {
+    setReading(true);
+    setReadToken((n) => n + 1);
   }, []);
+
+  /**
+   * The read. The head crosses the plate once, and the read bar reports the
+   * first well in each column as the head passes over it, so the numbers move
+   * while the liquid does. It settles on rank 1, which is where a reader's eye
+   * ends up anyway.
+   */
+  useEffect(() => {
+    if (!reading) return;
+    const reduced = window.matchMedia?.(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    if (reduced) {
+      setReading(false);
+      return;
+    }
+
+    let column = 0;
+    const tick = window.setInterval(() => {
+      const first = slots.find((s) => s.compound && s.index % COLUMNS === column);
+      if (first) setReadIndex(first.index);
+      column += 1;
+      if (column >= COLUMNS) window.clearInterval(tick);
+    }, COLUMN_MS);
+
+    const settle = window.setTimeout(() => {
+      setReading(false);
+      setReadIndex(0);
+    }, COLUMNS * COLUMN_MS + READ_TAIL_MS);
+
+    return () => {
+      window.clearInterval(tick);
+      window.clearTimeout(settle);
+    };
+  }, [reading, readToken, slots]);
+
+  /** Touching the plate ends the read: the reader has taken over. */
+  const takeOver = useCallback(() => setReading(false), []);
+
+  // The plate owns the strain choice for the whole page. The chemical-space map
+  // further down follows this rather than carrying a second control for it.
+  useEffect(() => {
+    window.dispatchEvent(
+      new CustomEvent("plate:reading", { detail: { slug } }),
+    );
+  }, [slug]);
+
+  // Record mode drives the same three things a presenter would: read the
+  // plate, change plate, open a well.
+  useEffect(() => {
+    const onReplay = () => startRead();
+    const onStrain = (event: Event) => {
+      const next = (event as CustomEvent<{ slug: string }>).detail?.slug;
+      if (!next || !pathogens.some((p) => p.slug === next)) return;
+      setSlug(next);
+      setReadIndex(0);
+      startRead();
+    };
+    const onWell = (event: Event) => {
+      const detail = (event as CustomEvent<{ well?: string; tier?: string }>)
+        .detail;
+      const match = slots.find((s) =>
+        detail?.well
+          ? s.compound?.well === detail.well
+          : detail?.tier
+            ? s.compound?.tier === detail.tier
+            : false,
+      );
+      if (!match) return;
+      setReading(false);
+      setReadIndex(match.index);
+    };
+
+    window.addEventListener("plate:replay", onReplay);
+    window.addEventListener("plate:strain", onStrain);
+    window.addEventListener("plate:well", onWell);
+    return () => {
+      window.removeEventListener("plate:replay", onReplay);
+      window.removeEventListener("plate:strain", onStrain);
+      window.removeEventListener("plate:well", onWell);
+    };
+  }, [pathogens, slots, startRead]);
 
   const step = useCallback(
     (from: number, delta: number) => {
@@ -116,9 +206,14 @@ export default function Plate({
         <StrainSelector
           pathogens={pathogens}
           slug={slug}
+          // A new plate is a new read, not a new picture of one. The read is
+          // the only thing on this page that produces the numbers, so a plate
+          // that changed without being read would be asserting them.
           onSelect={(next) => {
+            if (next === slug) return;
             setSlug(next);
             setReadIndex(0);
+            startRead();
           }}
         />
       </div>
@@ -157,16 +252,29 @@ export default function Plate({
           </div>
         </div>
 
-        <div
-          ref={grid}
-          className={reading ? "plate-reading" : undefined}
-          onKeyDown={onKeyDown}
-        >
+        {/* Keyed on the read: a CSS animation only replays on a new element,
+            and the whole stage must restart together or the head would run
+            ahead of the liquid it is supposed to be reading. */}
+        <div className="plate-stage" key={readToken}>
+          {reading ? (
+            <div aria-hidden="true" className="plate-sweep">
+              <div className="plate-sweep-head" />
+            </div>
+          ) : null}
+          {/* The read ends on pointer-move rather than pointer-enter: with the
+              cursor already resting on the plate, enter would cancel a replay
+              before it had drawn a single column. */}
+          <div
+            ref={grid}
+            className={reading ? "plate-reading" : undefined}
+            onKeyDown={onKeyDown}
+            onPointerMove={takeOver}
+          >
           {TIERS.map((tier) => (
             <div key={tier.label}>
               {tier.rule ? (
-                <div className="my-3 flex items-center gap-3">
-                  <hr className="rule flex-1" />
+                <div id="beyond" className="my-3 flex items-center gap-3 scroll-mt-32">
+                  <hr className="rule rule-draws flex-1" />
                   <p className="legend shrink-0 text-growth">
                     Below this rule · beyond the read
                   </p>
@@ -230,11 +338,21 @@ export default function Plate({
               </div>
             </div>
           ))}
+          </div>
         </div>
 
-        <p className="prose mt-3 max-w-[70ch]">
-          Wells run in rank order, left to right. Hover one to read it, or walk
-          the plate with the arrow keys.
+        <p className="prose mt-3 flex max-w-[70ch] flex-wrap items-baseline gap-x-2">
+          <span>
+            Wells run in rank order, left to right. Hover one to read it, or
+            walk the plate with the arrow keys.
+          </span>
+          <button
+            type="button"
+            className="text-ink underline decoration-[color-mix(in_srgb,var(--color-broth)_62%,transparent)] decoration-1 underline-offset-[0.22em] transition-[text-decoration-color] duration-[90ms] ease-linear hover:decoration-[var(--color-broth)]"
+            onClick={startRead}
+          >
+            Read the plate again
+          </button>
         </p>
       </div>
 
@@ -258,10 +376,14 @@ export default function Plate({
                   <WellMark compound={compound} column={0} />
                 </span>
                 <span aria-hidden="true" className="w-[4.5rem] shrink-0">
+                  {/* All 65 at once blocks the main thread long enough that
+                      the thesis above has not painted yet. Draw each one as it
+                      comes near, which is what `defer` is for. */}
                   <Structure
                     smiles={compound.smiles}
                     scale="inline"
                     label={compound.skeleton}
+                    defer
                   />
                 </span>
                 {/* The skeleton is the compound's identifier, so it prints in
@@ -302,7 +424,7 @@ export default function Plate({
       {/* The slip reads across the whole page: it is the detail, and the two
           columns above are the way in, not a frame to keep it inside. */}
       {read ? (
-        <div className="mt-10 lg:col-span-2 lg:mt-4">
+        <div id="slip" className="mt-10 scroll-mt-6 lg:col-span-2 lg:mt-4">
           <Slip compound={read} pathogen={pathogen} />
         </div>
       ) : null}
@@ -395,7 +517,7 @@ function ReadLegend({ pathogen }: { pathogen: Pathogen }) {
         twin: false,
       },
       title: "Not read",
-      body: `Struck through: its nearest known compound is past the gold line at ${tanimoto(pathogen.domainCutoff)}, so the score is not evidence of activity.`,
+      body: `Struck through: its nearest known compound is past the read line at ${tanimoto(pathogen.domainCutoff)}, so the score is not evidence of activity.`,
     },
   ];
 
@@ -407,13 +529,18 @@ function ReadLegend({ pathogen }: { pathogen: Pathogen }) {
         <strong className="font-medium text-ink">full</strong> it is shows how
         close that compound sits to known chemistry; how{" "}
         <strong className="font-medium text-ink">cloudy</strong>, the predicted
-        score. The gold line is where the read stops.
+        score. The line across every well is where the read stops.
       </p>
-      <dl className="grid gap-x-7 gap-y-3 sm:grid-cols-3">
-      {rows.map((row) => (
+      {/* The key fills itself the same way the plate does, so the reader is
+          shown the encoding happening before they are shown 65 of them. */}
+      <dl className="plate-view grid gap-x-7 gap-y-3 sm:grid-cols-3">
+      {rows.map((row, i) => (
         <div key={row.title} className="flex items-start gap-3">
           <span aria-hidden="true" className="mt-0.5 w-6 shrink-0">
-            <WellMark compound={row.compound as unknown as Compound} column={0} />
+            <WellMark
+              compound={row.compound as unknown as Compound}
+              column={i * 3}
+            />
           </span>
           <div className="min-w-0">
             <dt className="text-[var(--text-small)] leading-tight font-medium">

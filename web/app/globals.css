@@ -1,24 +1,37 @@
 @import "tailwindcss";
 
 /* ---------------------------------------------------------------------------
-   The microdilution read.
-   Ground is the colour of a resazurin well where nothing grew. The dye's pink
-   is held for growth, the negative read and everything outside the domain.
-   Straw is broth turbidity. Polystyrene light is ink and rim.
+   The microdilution read, in Egyptian blue.
+
+   Three colours carry the brand and nothing else is allowed in. Egyptian blue
+   (#1034a6), the oldest manufactured pigment there is, is the ground and the
+   light that comes through a clear well. Stone blue is every measured quantity:
+   turbidity, the read line, a bar, a plotted point. Scarlet is rare on purpose
+   and means exactly one thing, a value that cannot be banked, so it appears on
+   an out-of-domain well, a missing record and nowhere else.
+
+   The token names are roles, not hues, and they outlived the palette they were
+   named in: `broth` is the measurement colour, `growth` is the colour of a
+   result you cannot use, `clear` is transmitted light. Changing what they point
+   at re-skins the whole surface without touching a component.
 --------------------------------------------------------------------------- */
 
 @theme {
-  --color-void: #050f2b;
-  --color-plate: #081a42;
-  --color-plate-raised: #0b2252;
-  --color-ink: #eaf1fc;
-  --color-ink-dim: #9fb4d8;
-  --color-ink-faint: #7c93bd;
-  --color-growth: #f0457e;
-  --color-broth: #e8b93f;
-  --color-rim: #d7e3f4;
-  /* Transmitted light through a clear well; turbidity mixes straw into it. */
-  --color-clear: #2566d6;
+  --color-void: #040c26;
+  --color-plate: #081a52;
+  --color-plate-raised: #0e2470;
+  --color-ink: #eef3fc;
+  --color-ink-dim: #93a7c4;
+  --color-ink-faint: #6e84a6;
+  /* Scarlet. Small touches, and only where a value cannot be banked. */
+  --color-growth: #e8341f;
+  /* Stone blue: every measured quantity on the surface. */
+  --color-broth: #a9c6e8;
+  --color-rim: #dce6f5;
+  /* Egyptian blue itself: the light through a clear well. Turbidity mixes
+     stone blue into it, so a cloudy well goes milky and a clear one stays
+     deep, which is what the eye actually does at a plate reader. */
+  --color-clear: #1034a6;
 
   --font-sans: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-martian), ui-monospace, monospace;
@@ -40,6 +53,11 @@
   --rim: color-mix(in srgb, var(--color-rim) 26%, transparent);
   --hairline: color-mix(in srgb, var(--color-rim) 14%, transparent);
   --read-line: 32.8%;
+  /* The read's own clock. One tick per plate column; the sweep, the fill and
+     the read bar all count in it, so the head is never ahead of its liquid.
+     Mirrored in Plate.tsx as COLUMN_MS, which drives the read bar. */
+  --read-tick: 96ms;
+  --read-span: calc(var(--read-tick) * 12);
 }
 
 * {
@@ -50,6 +68,11 @@ html {
   overflow-x: clip;
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
+  /* The ground is on `html` as well as `body` so that the cut to /pipeline
+     mid-take cannot flash a white canvas between the two documents. On a dark
+     surface that flash is a single bright frame, and a single bright frame is
+     the thing a viewer remembers about a recording. */
+  background: var(--color-plate);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -271,17 +294,92 @@ a:hover {
   outline-offset: 3px;
 }
 
-/* The plate reads itself once, column by column. */
+/* The plate reads itself column by column, and the head that reads it is
+   visible. A plate reader crosses the glass once; the liquid in a column only
+   exists after the head has been over it, which is why both count in
+   --read-tick and the fill is delayed by the same column index. */
 @media (prefers-reduced-motion: no-preference) {
   .plate-reading .well-liquid {
     animation: fill 240ms steps(2, end) backwards;
-    animation-delay: calc(var(--col) * 72ms);
+    animation-delay: calc(var(--col) * var(--read-tick));
+  }
+
+  /* An unread well is an empty well: the rim is there, the liquid is not. */
+  .plate-reading .well::after {
+    animation: lamp 240ms steps(2, end) backwards;
+    animation-delay: calc(var(--col) * var(--read-tick));
   }
 }
 
 @keyframes fill {
   from {
     height: 0%;
+  }
+}
+
+@keyframes lamp {
+  from {
+    background: color-mix(in srgb, var(--color-broth) 30%, transparent);
+  }
+}
+
+/* --- The read head -------------------------------------------------------- *
+   The optics that cross the plate. One column wide, so translating it by its
+   own width is exactly one column, and twelve steps carry it over the plate in
+   the same clock the liquid fills on. It is drawn only while the plate reads.
+--------------------------------------------------------------------------- */
+
+.plate-stage {
+  position: relative;
+}
+
+.plate-sweep {
+  position: absolute;
+  /* The wells start past the row letter (1rem) and its gap (0.5rem). */
+  inset: 0 0 0 1.5rem;
+  z-index: 5;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.plate-sweep-head {
+  position: absolute;
+  inset-block: 0;
+  left: 0;
+  width: calc(100% / 12);
+  /* The lit column has to survive a video bitrate, so it carries a little more
+     straw than a hairline would; the 1px edge is what makes it a head and not
+     a highlight. */
+  background: color-mix(in srgb, var(--color-broth) 11%, transparent);
+  border-right: 1px solid var(--color-broth);
+  animation: sweep var(--read-span) steps(12, end) both;
+}
+
+@keyframes sweep {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(1200%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .plate-sweep {
+    display: none;
+  }
+}
+
+/* The boundary is the thesis, so it is drawn rather than simply present: the
+   rule lays itself across the plate once the head has finished its pass. */
+.rule-draws {
+  transform-origin: left;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .plate-reading .rule-draws {
+    animation: plot-x 320ms steps(6, end) backwards;
+    animation-delay: var(--read-span);
   }
 }
 
@@ -294,6 +392,37 @@ a:hover {
   height: auto;
 }
 
+/* The depiction is plotted, not revealed: the slip's structure is laid down
+   left to right in steps, the way a pen plotter would put it on the page. A
+   wipe rather than per-bond stroking, because the bonds are the drawing
+   library's SVG and not ours to instrument. */
+@media (prefers-reduced-motion: no-preference) {
+  .structure[data-scale="slip"] svg {
+    animation: wipe-in 480ms steps(9, end) backwards;
+  }
+}
+
+/* `backwards`, never `both`: a clip-path animation that keeps filling forwards
+   holds its composited layer open after it has finished, and the element can
+   then be missing from a frame for as long as that layer lives. The plate's own
+   fill has always used `backwards` for the same reason. */
+@keyframes wipe-in {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+}
+
+/* The opening. The claim is written across the page while the plate reads
+   itself beside it: one sequence in two places, which is what the first frame
+   of the pitch has to carry. Same wipe as a plotted structure, because it is
+   the same instrument putting both on the page. */
+@media (prefers-reduced-motion: no-preference) {
+  .opens {
+    animation: wipe-in 420ms steps(8, end) backwards;
+    animation-delay: calc(var(--open, 0) * 140ms);
+  }
+}
+
 /* The list reserves the depiction's box before it is drawn, so a row never
    changes height when its molecule arrives. */
 .structure[data-scale="inline"] {
@@ -303,4 +432,166 @@ a:hover {
 .structure[data-scale="inline"] svg {
   height: 100%;
   width: 100%;
+}
+
+/* --- The pipeline story -------------------------------------------------- *
+   One scroll, twelve beats. The spine at the left edge is the plate's own
+   margin rule: a hairline the whole way down with the read so far drawn in
+   straw. Each figure then plots itself on arrival, in steps, the way the
+   instrument would have drawn it. Every range closes by the time the element
+   is fully in view, so a proportional bar is never left part-drawn where it
+   would read as a different number. A browser without scroll-driven animation,
+   and anyone who asked for reduced motion, gets every figure finished.
+--------------------------------------------------------------------------- */
+
+.spine {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
+}
+
+.spine-rule,
+.spine-fill {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 1px;
+}
+
+.spine-rule {
+  bottom: 0;
+  background: var(--hairline);
+}
+
+.spine-fill {
+  height: 100%;
+  background: var(--color-broth);
+  transform: scaleY(0);
+  transform-origin: top;
+}
+
+@supports (animation-timeline: scroll()) {
+  .spine-fill {
+    animation: spine-read linear both;
+    animation-timeline: scroll(root block);
+  }
+}
+
+@keyframes spine-read {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+/* The stage numeral lives in that margin, not above the heading. */
+.beat-number {
+  font-family: var(--font-mono);
+  font-size: var(--text-legend);
+  letter-spacing: -0.02em;
+  color: var(--color-ink-faint);
+  font-variant-numeric: tabular-nums;
+}
+
+/* A refused unit, or a source we did not use: struck with the same diagonal an
+   out-of-domain well carries. The only gradient in the system, still used as a
+   way to draw a 1px line and never as a surface. */
+.cell-struck {
+  position: relative;
+}
+
+.cell-struck::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  background: linear-gradient(
+    to bottom right,
+    transparent calc(50% - 0.5px),
+    var(--color-growth) calc(50% - 0.5px),
+    var(--color-growth) calc(50% + 0.5px),
+    transparent calc(50% + 0.5px)
+  );
+}
+
+.node-struck > p:first-of-type {
+  text-decoration: line-through;
+  text-decoration-color: var(--color-growth);
+  text-decoration-thickness: 1px;
+}
+
+/* --- Plotting on arrival -------------------------------------------------- */
+
+.draw-x,
+.draw-y {
+  transform-origin: left;
+}
+
+.draw-y {
+  transform-origin: bottom;
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .draw-x {
+      animation: plot-x 1 steps(5, end) both;
+      animation-timeline: view();
+      animation-range: entry 8% entry calc(70% + var(--step, 0) * 6%);
+    }
+
+    .draw-y {
+      animation: plot-y 1 steps(4, end) both;
+      animation-timeline: view();
+      animation-range: entry 8% entry calc(68% + var(--step, 0) * 6%);
+    }
+
+    .draw-cell,
+    .draw-dot {
+      animation: plot-mark 1 steps(2, end) both;
+      animation-timeline: view();
+      animation-range: entry calc(8% + var(--step, 0) * 2%) entry 92%;
+    }
+
+    .draw-path {
+      stroke-dasharray: 1;
+      animation: plot-path 1 steps(8, end) both;
+      animation-timeline: view();
+      animation-range: entry 12% entry calc(85% + var(--step, 0) * 5%);
+    }
+
+    .plate-view .well-liquid {
+      animation: fill 1 steps(2, end) both;
+      animation-timeline: view();
+      animation-range: entry calc(8% + var(--col, 0) * 1.6%) entry 95%;
+    }
+  }
+}
+
+@keyframes plot-x {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+@keyframes plot-y {
+  from {
+    transform: scaleY(0);
+  }
+}
+
+@keyframes plot-mark {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes plot-path {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
 }

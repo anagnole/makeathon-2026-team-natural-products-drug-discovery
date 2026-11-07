@@ -24,7 +24,13 @@ export default function Slip({
           <p className="legend mb-2">
             Well {compound.well} · rank {compound.rank} of {pathogen.shortlist.length}
           </p>
-          <Structure smiles={compound.smiles} label={compound.skeleton} />
+          {/* Keyed on the compound so the depiction is plotted again for each
+              well read, rather than being swapped in already finished. */}
+          <Structure
+            key={compound.smiles}
+            smiles={compound.smiles}
+            label={compound.skeleton}
+          />
         </div>
 
         <div className="min-w-0">
