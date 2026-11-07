@@ -1,0 +1,12 @@
+data
+organiser
+notebooks
+scripts
+tests
+docs
+.venv
+web/node_modules
+web/.next
+web/out
+.claude
+.impeccable

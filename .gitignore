@@ -235,3 +235,5 @@ data/
 .impeccable/review/
 .impeccable/mocks/
 .impeccable/questions/
+.vercel
+.env*
