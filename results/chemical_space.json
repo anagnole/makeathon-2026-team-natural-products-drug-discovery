@@ -1,0 +1,53 @@
+{
+  "escherichia_coli": {
+    "candidates": 65,
+    "component_variance": [
+      0.0425,
+      0.0334
+    ],
+    "fingerprint_bits": 2048,
+    "fingerprint_radius": 2,
+    "measured_drawn": 1500,
+    "measured_fitted": 20000,
+    "measured_from_plants": 31,
+    "measured_total": 43099,
+    "nearest_measured_exploratory": 0.004,
+    "nearest_measured_in_domain": 0.0033,
+    "seed": 0,
+    "variance_explained": 0.0759
+  },
+  "mycobacterium_tuberculosis": {
+    "candidates": 65,
+    "component_variance": [
+      0.029,
+      0.0228
+    ],
+    "fingerprint_bits": 2048,
+    "fingerprint_radius": 2,
+    "measured_drawn": 1500,
+    "measured_fitted": 20000,
+    "measured_from_plants": 42,
+    "measured_total": 22907,
+    "nearest_measured_exploratory": 0.0066,
+    "nearest_measured_in_domain": 0.0068,
+    "seed": 0,
+    "variance_explained": 0.0518
+  },
+  "staphylococcus_aureus": {
+    "candidates": 65,
+    "component_variance": [
+      0.0387,
+      0.0349
+    ],
+    "fingerprint_bits": 2048,
+    "fingerprint_radius": 2,
+    "measured_drawn": 1500,
+    "measured_fitted": 20000,
+    "measured_from_plants": 35,
+    "measured_total": 58191,
+    "nearest_measured_exploratory": 0.0027,
+    "nearest_measured_in_domain": 0.0029,
+    "seed": 0,
+    "variance_explained": 0.0736
+  }
+}
