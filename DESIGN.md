@@ -2,16 +2,16 @@
 name: The Microdilution Read
 description: A virtual screen read like the assay its labels came off, every predicted score shown with its distance.
 colors:
-  plate: "#081a42"
-  void: "#050f2b"
-  plate-raised: "#0b2252"
-  growth: "#f0457e"
-  broth: "#e8b93f"
-  clear: "#2566d6"
-  rim: "#d7e3f4"
-  ink: "#eaf1fc"
-  ink-dim: "#9fb4d8"
-  ink-faint: "#7c93bd"
+  plate: "#081a52"
+  void: "#040c26"
+  plate-raised: "#0e2470"
+  growth: "#e8341f"
+  broth: "#a9c6e8"
+  clear: "#1034a6"
+  rim: "#dce6f5"
+  ink: "#eef3fc"
+  ink-dim: "#93a7c4"
+  ink-faint: "#6e84a6"
 typography:
   thesis:
     fontFamily: "Archivo, ui-sans-serif, system-ui, sans-serif"
@@ -142,62 +142,69 @@ greyscale and survives a bad projector.
   width axis rather than by weight.
 - Every measurement in Martian Mono with tabular figures; prose in Archivo.
 - Square everything except the well, which is a circle because a well is round.
-- Motion is step-only: `steps(2, end)`, 72–90ms, no easing curve anywhere.
+- Motion is step-only, no easing curve anywhere: 72–90ms for a state change,
+  and as many steps as the instrument would have taken for a quantity drawn.
+- The plate is read rather than shown, and the head that reads it is visible.
 
 ## Colors
 
-A single deep assay blue holds the page, against three reserved signal colours
-drawn straight from the chemistry of the read.
+Three colours carry the brand and nothing else is allowed in: Egyptian blue,
+stone blue, and scarlet in small touches. The token names are roles rather than
+hues and outlived the palette they were named in — `broth` is the measurement
+colour, `growth` is the colour of a result you cannot use, `clear` is
+transmitted light. Changing what they point at re-skins the surface without
+touching a component, which is how this palette replaced the previous one.
 
 ### Primary
-- **Resazurin Ground** (`#081a42`): the colour of a well where nothing grew.
-  Page background, every panel, every button face. It is not a "surface
-  colour" among several; it is the whole surface, and panels are told apart by
-  hairlines, not by tinted boxes.
-- **Plate Edge Black-Blue** (`#050f2b`): the darker edge stock. Used only for
-  the top strip, the footer, and the inside of an empty well, the three places
-  the plate is not liquid.
-- **Lifted Plate** (`#0b2252`): one step up from ground, used only for the
+- **Egyptian Blue Ground** (`#081a52`): the oldest manufactured pigment there
+  is, pulled down to hold a page. Background, every panel, every button face. It
+  is not a surface colour among several; it is the whole surface, and panels are
+  told apart by hairlines, not by tinted boxes.
+- **Plate Edge** (`#040c26`): the darker edge stock. The top strip, the footer,
+  the record strip, and the inside of an empty well.
+- **Lifted Plate** (`#0e2470`): one step up from ground, used only for the
   selected strain plate and its hover. The single tonal lift in the system.
 
 ### Secondary
-- **Growth Pink** (`#f0457e`): the dye's own colour when something grew. It
-  means exactly three things and nothing else, growth, the out-of-domain tier,
-  and a missing record (no source plant, no DOI). It is the colour of a result
-  you cannot bank.
-- **Broth Straw** (`#e8b93f`): the measurement colour. Turbidity mixed into the
-  liquid, the applicability-domain read line drawn across every well, the
-  pathway bars, the focus ring, the caret, and the one display accent in the
-  thesis headline.
-- **Lit Liquid** (`#2566d6`): transmitted light through a clear well. Never used
-  as a UI colour; it exists so turbidity has something to cloud.
+- **Egyptian Blue** (`#1034a6`): the pigment at full strength, used only as the
+  light coming through a clear well. Never a UI colour; it exists so that
+  turbidity has something to cloud.
+- **Stone Blue** (`#a9c6e8`): every measured quantity on the surface. Turbidity,
+  the read line, a bar, a plotted point, the focus ring. A clear well stays deep
+  Egyptian blue and a cloudy one goes milky stone, which is what the eye
+  actually does at a plate reader.
+- **Scarlet** (`#e8341f`): rare on purpose. It means exactly one thing, a value
+  that cannot be banked, so it appears on an out-of-domain well, the rule above
+  that tier, and a missing record. The one sanctioned exception is the numeral
+  in each page's thesis, which is scarlet because it is the number the whole
+  surface exists to defend.
 
 ### Neutral
-- **Polystyrene Light** (`#d7e3f4`): rim and hairline stock. Never shipped at
-  full strength on a flat surface, the rim is it at 26%, the hairline at 14%,
+- **Polystyrene Light** (`#dce6f5`): rim and hairline stock. Never shipped at
+  full strength on a flat surface: the rim is it at 26%, the hairline at 14%,
   the meniscus at 72%. Full strength only on the inked twin ring.
-- **Plate Ink** (`#eaf1fc`): body copy, headings, numerals that are in range.
-- **Dimmed Ink** (`#9fb4d8`): ledes, captions, the second line under every
-  number.
-- **Faint Ink** (`#7c93bd`): plate coordinates (1–12, A–H), legend labels, the
-  quietest provenance line.
+- **Plate Ink** (`#eef3fc`): body copy, headings, numerals that are in range.
+- **Dimmed Ink** (`#93a7c4`): ledes, captions, the second line under a number.
+- **Faint Ink** (`#6e84a6`): plate coordinates, legend labels, the quietest
+  provenance line.
 
 ### Named Rules
 
-**The Committed Ground Rule.** `#081a42` carries the page. A new surface does
+**The Committed Ground Rule.** `#081a52` carries the page. A new surface does
 not get its own background colour; it gets a hairline and a heading. Only the
-plate edge (`#050f2b`) and the selected strain (`#0b2252`) may differ, and both
-are already spoken for.
+plate edge and the selected strain may differ, and both are already spoken for.
 
-**The Growth Reservation Rule.** Growth pink is never decoration, never a brand
-accent, never a hover. It appears only where a value cannot be banked: the
-out-of-domain tier, a value below the read line, and a missing record. If pink
-appears on a screen with no such value on it, the screen is wrong.
+**The Scarlet Reservation Rule.** Scarlet is never decoration and never a hover.
+As a *mark* it appears only where a value cannot be banked. As *type* it appears
+once per page, on the thesis numeral, and nowhere else. If scarlet is on a screen
+with no such value on it and no thesis, the screen is wrong.
 
 **The Form-Not-Hue Rule.** Every tier distinction ships as a mark as well as a
 colour: struck diagonal for outside the read, an inked ring for a fingerprint
 twin, no mark at all for in-domain. Print the screen in greyscale; if a tier
-disappears, it was never drawn.
+disappears, it was never drawn. The copy obeys this too: no sentence on the
+surface names a colour, because a sentence that does is a sentence that breaks
+when the palette changes.
 
 ## Typography
 
@@ -355,7 +362,11 @@ grid gap over ground.
 - **Selected:** lifted plate ground (`#0b2252`) and a filled 8px straw dot;
   unselected shows a hollow dot ringed in faint ink.
 - **Hover:** lifts to the same raised ground over 90ms linear. Switching strains
-  is a hard cut; the plate never pans or re-reads.
+  re-reads the plate: the head crosses it again and the wells fill behind it.
+  The plate never pans, and it never cross-fades between strains; the old read
+  is gone before the new one starts. Changed 7 Nov from the original hard cut,
+  because the numbers on this page are produced by a read, and a plate that
+  changed without being read would be asserting them instead.
 
 ### Read Bar
 One line between two hairlines directly under the strain heading, carrying the
@@ -386,6 +397,30 @@ leftmost starts at the track edge and the rightmost ends at it and neither can
 push the page wider. This is the house chart: no axes, no gridlines, no legend
 box.
 
+### Figures (the pipeline story)
+The `/pipeline` surface tells the build as twelve beats of one scroll, and its
+figures are built from the same four things as the rest of the system: a
+hairline, a filled block, a circle, and the diagonal strike.
+- **Funnel:** a descending run of blocks, each as wide as its share of the
+  first, with the count it cut written between the rows. A `log` track where a
+  run spans orders of magnitude, said so in the figure's own label.
+- **Strip:** one quantity split into its parts along a single track, each part
+  named and counted below it.
+- **Detail:** a quantity too small to see at full scale, drawn twice and tied
+  by two hairlines, so a sliver can be magnified without being exaggerated.
+- **Overlap:** two blocks and the band where they meet.
+- **Cells:** one bordered square per thing counted, so 37 unit strings and 18
+  refusals are seen rather than read. A refused cell carries the strike.
+- **Slope:** the same model read at three stations; a 1.5px line and a square
+  node per reading, value in mono above it. One line per chart, named by the
+  heading rather than a legend.
+- **Spread:** estimates of one effect on an axis with zero drawn full height.
+- **Chain:** blocks joined by a straw hairline, for sources feeding a table and
+  stages feeding a ledger. A struck title is a source we did not use.
+- **Margin rule:** a hairline down the left gutter, carrying the stage numeral
+  of each beat and filling in straw with the share of the page read. It is the
+  one sticky element in the system and it holds no controls.
+
 ### Plate Edge (header) and Plate Foot (footer)
 Full-bleed `#050f2b` strips against the ground, divided by a single hairline.
 The header carries event and track in the legend register at left and the run
@@ -394,6 +429,20 @@ footer carries the obligations, repository, generative-AI disclosure,
 traditional-knowledge statement, in three columns of small dimmed text. Neither
 strip is a navigation bar and neither is sticky.
 
+### Record Strip
+The operator's edge, present only in record mode (`R`), which walks the pitch's
+twelve beats from the keyboard so a take never depends on finding a well with
+the mouse. Same `#050f2b` stock and same hairline as the header and footer, at
+the bottom of the viewport: beat number in mono, the beat's name, the next
+beat's name in faint ink, and the key legend at the right. `H` hides it for a
+clean frame.
+
+It is fixed, which the No-Overlay Rule otherwise forbids, and it earns the
+exception by being the third plate edge rather than a panel: zero radius, no
+shadow, no tint, nothing of the page behind it showing through, and nothing in
+it to click. The beats themselves are written out in `docs/video-script.md`, so
+the running order on screen and the narration are one list.
+
 ### Links and Focus
 Links are plate ink with a 1px underline in straw at 62%, offset 0.22em, going
 to full straw on hover in a single 90ms two-frame step. Focus is a 2px straw
@@ -401,10 +450,37 @@ outline at 2px offset (3px on a well), and it is never removed.
 
 ### Named Rules
 
-**The Step-Only Rule.** Every transition in this system is `steps(2, end)` at
-72–90ms, or a 90ms linear colour change. There is no easing curve anywhere.
-The plate reads itself once on load, column by column at 72ms per column, and
-then stops; `prefers-reduced-motion` renders it already read.
+**The Step-Only Rule.** Every transition in this system is a step function or a
+90ms linear colour change. There is no easing curve anywhere, and there is no
+exception for a sequence that would "feel better" with one. A state change is
+`steps(2, end)` at 72–90ms; a quantity being drawn takes as many steps as the
+instrument would have taken to draw it, up to the twelve of a plate read.
+
+**The Read Rule.** The plate is read, never simply shown. A read is one pass of
+the head across the twelve columns at `--read-tick` (96ms), the liquid filling a
+column behind the head as it clears it, the read bar reporting the first well in
+each column as it is passed, the domain rule drawing itself once the head is off
+the far edge, and the read settling on rank 1. It runs on load, on a strain
+change, and on demand, and it is the only thing that puts liquid in a well.
+Touching the plate ends the read: the reader has taken over. The head is a
+one-column band of straw at 11% carrying a 1px straw edge; it exists only while
+a read is running. `prefers-reduced-motion` renders the plate already read, with
+no head.
+
+**The Backwards-Fill Rule.** Any animation of `clip-path` fills `backwards`,
+never `both`. A clip-path animation that keeps filling forwards holds its
+composited layer open after it has finished, and the element can be missing
+from a captured frame for as long as that layer lives — which on a surface whose
+job is to be screen-recorded is a dropped headline, not a cosmetic bug.
+
+**The Plot-On-Arrival Rule.** A figure in the story draws itself once as it
+comes into view, in steps, the way the instrument would have plotted it: bars
+grow from their own baseline, a slope line is laid down in eight steps, wells
+fill column by column. Every range closes by the time the element is fully in
+view, so a proportional bar is never left part-drawn where it would read as a
+different number. It is scroll-driven CSS and nothing else; a browser without
+`animation-timeline`, and anyone who asked for reduced motion, gets every
+figure already finished.
 
 **The No-Overlay Rule.** The detail of a well opens in place, under the plate,
 across the full page width. Nothing in this system floats above the plate: no
