@@ -20,6 +20,8 @@ ladder and a shortlist that declares its own limits.
 
 **Live site: <https://ethnohack-track2.vercel.app>** (no sign-in, no build step).
 
+**Pitch video: <https://www.youtube.com/watch?v=igDx-wXzCYc>** (6 min 26 s).
+
 The site has two pages. `/` is the deliverable: pick a pathogen, read the plate,
 open a compound. `/pipeline` is the argument behind it, stage by stage, from the
 Track 2 question to the run ledger. Slides are in

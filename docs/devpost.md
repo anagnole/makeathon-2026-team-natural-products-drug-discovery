@@ -7,12 +7,13 @@ Paste-ready. Every figure here is the one in `README.md`, which reads from
 
 ## Project name
 
-Plant compounds, ranked against three bacterial pathogens
+Plant Shortlist
 
 ## Elevator pitch (one line)
 
-One model per pathogen over published MIC data, screening 97,709 never-measured
-plant structures, and a 50-compound shortlist that declares its own limits.
+A lab can make fifty compounds, not a hundred thousand. We rank 97,709 untested
+plant compounds against three bacteria and shortlist 150, each with a measured
+number saying how much to trust it.
 
 ## Track
 
@@ -129,6 +130,7 @@ next.js, react, tailwindcss, typescript, vercel, chembl, lotus, gbif
 
 ## Try it out
 
+- Pitch video: https://www.youtube.com/watch?v=igDx-wXzCYc
 - Live shortlists: https://ethnohack-track2.vercel.app
 - Code: https://github.com/anagnole/makeathon-2026-team-natural-products-drug-discovery
 
