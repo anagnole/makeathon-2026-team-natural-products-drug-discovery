@@ -3,9 +3,15 @@ import { join } from "node:path";
 import { parseCsv } from "./csv";
 
 /**
- * Everything on this surface is read at build time from the committed result
- * files in `results/`. Nothing is recomputed here and nothing is hard-coded:
- * if a number appears on the page, it came out of a file under RESULTS.
+ * Every model and evaluation number on this surface is read at build time from
+ * the committed result files in `results/`. Nothing is recomputed here.
+ *
+ * One documented exception: the data-survey figures on `/pipeline` (the 99.6%
+ * whole-organism share, the censoring and threshold splits, the replication
+ * counts) are literals in that page, because notebook 01 writes no entry to
+ * `runs.jsonl`. They are notebook-01 measurements, not inventions, but they do
+ * not come through this module. Logging notebook 01 to the ledger would close
+ * the gap.
  */
 const RESULTS = join(process.cwd(), "..", "results");
 

@@ -141,7 +141,7 @@ function Credits({
     <Section
       id="credits"
       title="Who built it, and what it stands on."
-      lede="Two people, one week, one repository. Every number here is read at build time from a committed result file."
+      lede="Team Arxigoi: two people, one week, one repository. Every number here is read at build time from a committed result file."
     >
       <div>
         <ul className="grid gap-x-10 gap-y-4 sm:grid-cols-2">

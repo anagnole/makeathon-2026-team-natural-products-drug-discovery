@@ -74,7 +74,10 @@ export default function Title({ pathogens }: { pathogens: Pathogen[] }) {
 
         <div className="border-t border-[var(--hairline)] pt-5">
           <h2 className="legend mb-3">Built by</h2>
-          <p className="text-base leading-tight font-medium">
+          <p className="text-base leading-tight font-medium text-broth">
+            Team Arxigoi
+          </p>
+          <p className="mt-1 text-base leading-tight font-medium">
             Leonidas Anagnou · Eleni Nasopoulou
           </p>
           <p className="mt-2 text-[var(--text-small)] text-ink-dim">
