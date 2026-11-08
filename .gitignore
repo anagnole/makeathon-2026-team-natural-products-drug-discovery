@@ -246,3 +246,14 @@ docs/screenshots/mobile.png
 # Local only: describes a team member's unpublished work, which is hers to
 # publish or not. The repo is public.
 .claude/memory/teammate.md
+
+# Pitch video: the voice takes and the rendered film are large binaries, and
+# the organisers' guide asks for no large files in git. The video itself is
+# delivered as a YouTube link on Devpost. The slide stills and build.sh are
+# committed, so the render is reproducible from deck.pdf plus the takes.
+video/audio/
+video/seg/
+video/pitch.mp4
+
+# macOS Finder metadata.
+.DS_Store

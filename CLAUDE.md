@@ -42,15 +42,24 @@ Two streams that meet at the labelled table and do not block each other:
 - 37 distinct unit strings, and 68.6% of µg/mL values sit at or below 32, so a 32 threshold makes most of the data "active". That is publication bias, and it is the strongest argument for the call's precision-over-recall framing.
 - It is a virtual screen: 95,529 compounds have a measurement, 153,745 plant structures do not, and only 2,157 are in both.
 
-Still open: the team name (deferred to the final presentation, so the repo keeps its placeholder).
+**Team name, settled 8 Nov: Arxigoi.** It is on the deck's title slide, in the README header and Team section, in `docs/deck/README.md`, and in the site byline (`web/components/Title.tsx`, `web/app/page.tsx`).
+
+**The repo still carries `team` in its name, and only Leonidas can change that.** Measured on 8 Nov: the repo is owned by `anagnole`, and `eleninspl` has `push` but not `admin` (`gh api repos/anagnole/<repo> --jq .permissions` returns `admin:false`). A rename returns HTTP 404, which is how GitHub reports a write refused for permissions. **The repo was made public on 8 Nov** (`gh repo view` reports `PUBLIC`), so that blocker is gone; only the rename is left, and it still needs his admin right. The name is cosmetic: GitHub redirects a renamed repo, so submitting the current URL is safe. The two commands for him, from the repo:
+
+```
+gh repo rename makeathon-2026-arxigoi-natural-products-drug-discovery --yes
+gh repo edit --visibility public --accept-visibility-change-consequences
+```
+
+GitHub redirects a renamed repo, so a URL already pasted into Devpost keeps working.
 
 **The plant-family split is not the headline. Measured on ChEMBL, 4 Nov, three organisms.** The criterion was whether the family-minus-scaffold gap survives by more than the repeat-to-repeat spread. It does not. *S. aureus* gives -0.073 with a paired sd of 0.067 (8 of 10 repeats), *E. coli* gives +0.004 with sd 0.139 (2 of 10, so the effect vanishes), *M. tuberculosis* gives -0.097 with sd 0.158 (7 of 10). Across four measurements now (-0.071 exploratory, -0.130 on NPASS, -0.073 and -0.097 here) the direction is usually negative and the magnitude is never stable. It goes in as a secondary analysis and an honest negative, not as the contribution. What does replicate cleanly on all three organisms is random above scaffold: 0.786/0.742, 0.769/0.669, 0.752/0.622. Two of the three family estimates come from test sets of 103 and 80 compounds, which is the likely reason they say so little.
 
 ## Repo
 
-This folder is the repo: https://github.com/anagnole/makeathon-2026-team-natural-products-drug-discovery (created 2 Nov, **private for now**, MIT, Python `.gitignore`). `team` in the name is a placeholder until the team name is set (`gh repo rename`). It must be made public before submitting. `CLAUDE.md` and the Claude project memory (`.claude/memory/`) are in the repo; `organiser/` holds the organisers' files and stays local (`.git/info/exclude`). The repo goes public, so nothing committed may hold secrets, promo codes or third-party names. Never commit or push unless the user asks.
+This folder is the repo: https://github.com/anagnole/makeathon-2026-team-natural-products-drug-discovery (created 2 Nov, **public since 8 Nov**, MIT, Python `.gitignore`). `team` in the name is a placeholder; the team is **Arxigoi**, so the rename target is `makeathon-2026-arxigoi-natural-products-drug-discovery` (`gh repo rename`). It is public. `CLAUDE.md` and the Claude project memory (`.claude/memory/`) are in the repo; `organiser/` holds the organisers' files and stays local (`.git/info/exclude`). The repo goes public, so nothing committed may hold secrets, promo codes or third-party names. Never commit or push unless the user asks.
 
-**Deadline: Sun 8 Nov 2026, 10:00 CET (11:00 Athens).** The slides and the FAQ say 10:00 CET. The Discord rules post shows "11:00 AM" only because Discord renders timestamps in the reader's time zone (the FAQ line reads "10:00 CET: Sunday, November 8, 2026 at 11:00 AM"), so it is the same moment. Late submissions are refused. Submit early: a submitted project can be edited until the deadline, and saving a Devpost draft is not submitting. Judges deliberate for a week, winners are announced Sun 15 Nov.
+**Deadline: Sun 8 Nov 2026, 22:00 CET (23:00 Athens). Extended twice**, read straight off the Devpost page at 20:15 Athens on the day ("Deadline: 8 Nov 2026 @ 11:00pm GMT+2"). Devpost is the authority here: the 14:30 CET figure reported in chat that morning, and the organisers' own documents below, are both out of date. **Originally 10:00 CET (11:00 Athens).** The slides and the FAQ say 10:00 CET. The Discord rules post shows "11:00 AM" only because Discord renders timestamps in the reader's time zone (the FAQ line reads "10:00 CET: Sunday, November 8, 2026 at 11:00 AM"), so it is the same moment. Late submissions are refused. Submit early: a submitted project can be edited until the deadline, and saving a Devpost draft is not submitting. Judges deliberate for a week, winners are announced Sun 15 Nov.
 
 Sources: `organiser/opening-ceremony.pdf` (the 2 Nov opening slides, the most authoritative) the Discord rules and FAQ of 30 Oct, the #track-2 channel intro, and auto-generated kickoff call notes (garbled in places: they call it the "Fathom Hackathon", list the wrong partners and mix up Track 3, so trust the slides). All summarised below; the verbatim pastes are not on disk.
 
