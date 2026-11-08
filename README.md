@@ -159,6 +159,14 @@ uv run python scripts/fetch_lotus.py && uv run python scripts/fetch_taxonomy.py 
 Then run the notebooks in order, `01` through `05`. Each saves what the next one
 loads, so nothing is recomputed. See [notebooks/README.md](notebooks/README.md).
 
+The unit tests cover the two places a silent error would be most expensive — the
+unit conversion and censored-value rules in `pipeline/labels.py`, and the
+cluster-level splitting in `pipeline/splits.py`. They need no downloaded data:
+
+```bash
+uv run pytest
+```
+
 ## What is in here
 
 | Path | What it holds |
