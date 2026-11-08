@@ -33,6 +33,8 @@ for head, body in zip(blocks[0::2], blocks[1::2]):
 text = "".join(out)
 summary = (f"**Total: {total:,} words, {clock(total/WPM*60)} "
            f"at a measured {int(WPM)} words per minute.** The cap is ten minutes.")
-text = re.sub(r'(?m)^\*\*(?:TOTALLINE|Total: .*)\*\*$', summary, text, count=1)
+text, hits = re.subn(r'(?m)^\*\*(?:TOTALLINE|Total: .*?)\*\*.*$', summary, text, count=1)
+if hits != 1:
+    sys.exit("expected one total marker in the preamble, found none")
 p.write_text(text)
 print(summary)
