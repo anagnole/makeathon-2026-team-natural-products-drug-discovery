@@ -241,3 +241,8 @@ data/
 # brag writes a video and its working files here; the organisers' GitHub
 # guide asks for no large files in git, so the output stays local.
 brag-output/
+
+# Full-page screenshot captures are megabytes; the organisers' GitHub guide asks
+# for no large files in git. The fold captures in the README are small and stay.
+docs/screenshots/desktop.png
+docs/screenshots/mobile.png

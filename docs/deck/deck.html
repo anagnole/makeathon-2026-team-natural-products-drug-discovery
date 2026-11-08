@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>EthnoHack 2026 Track 2 deck</title>
+<link rel="stylesheet" href="fonts/fonts.css">
+<style>
+/* ---------------------------------------------------------------------------
+   Deck palette. Roles are taken from DESIGN.md, which governs the web app:
+   `clear` is transmitted light, `growth` is a result you cannot use, `broth`
+   is a measured quantity. The app is dark-only; this deck is inverted onto the
+   off-white the committed matplotlib figures are already drawn on (#fcfcfb),
+   so a figure sits on the slide with no seam and no pasted-screenshot edge.
+   --------------------------------------------------------------------------- */
+:root{
+  --ground:#fcfcfb;      /* exactly the figures' own background */
+  --ink:#081a52;         /* Egyptian blue ground, used here as ink */
+  --ink-dim:#4a5a7d;
+  --ink-faint:#8292ae;
+  --clear:#1034a6;       /* Egyptian blue at full strength */
+  --growth:#e8341f;      /* scarlet: a value that cannot be banked */
+  --broth:#a9c6e8;       /* stone blue: measured quantity */
+  --rule:#dce6f5;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+@page{size:13.333in 7.5in;margin:0}
+html{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+body{background:var(--ground);color:var(--ink);
+  font-family:'Archivo',ui-sans-serif,system-ui,sans-serif;
+  font-variation-settings:'wdth' 112;}
+
+.slide{
+  width:13.333in;height:7.5in;page-break-after:always;break-after:page;
+  padding:0.62in 0.78in 0.58in;position:relative;overflow:hidden;
+  display:flex;flex-direction:column;background:var(--ground);
+}
+.slide:last-child{page-break-after:auto;break-after:auto}
+
+/* Running head: track on the left, slide number on the right. */
+.head{display:flex;justify-content:space-between;align-items:baseline;
+  font-size:10.5pt;font-weight:500;letter-spacing:.07em;text-transform:uppercase;
+  color:var(--ink-faint);font-variation-settings:'wdth' 94;
+  border-bottom:1px solid var(--rule);padding-bottom:.13in;margin-bottom:.34in;}
+.head .n{font-family:'Martian Mono',ui-monospace,monospace;letter-spacing:-.02em;font-size:9.5pt}
+
+h1{font-size:40pt;font-weight:600;line-height:.98;letter-spacing:-.035em;
+   font-variation-settings:'wdth' 112;max-width:11in}
+h2{font-size:25pt;font-weight:600;line-height:1.1;letter-spacing:-.028em;
+   font-variation-settings:'wdth' 112;max-width:10.6in}
+.lede{font-size:13.5pt;line-height:1.5;color:var(--ink-dim);max-width:8.4in;margin-top:.17in}
+.body{font-size:12.5pt;line-height:1.56;max-width:8.6in}
+em{font-style:italic}
+b,strong{font-weight:600}
+.m{font-family:'Martian Mono',ui-monospace,monospace;font-size:.88em;
+   letter-spacing:-.02em;font-feature-settings:'tnum' 1}
+.blue{color:var(--clear)}
+.red{color:var(--growth)}
+
+figure{margin-top:auto;margin-bottom:auto}
+/* Capped so a tall figure can never push its own caption off the slide:
+   the wide figures are unaffected, the squarer ones scale down to fit. */
+figure img{max-width:100%;max-height:3.95in;width:auto;display:block;margin:0 auto}
+figcaption{font-size:9.5pt;line-height:1.45;color:var(--ink-faint);margin-top:.12in;max-width:10.5in}
+
+.foot{margin-top:auto;padding-top:.16in;border-top:1px solid var(--rule);
+  font-size:9.5pt;line-height:1.45;color:var(--ink-faint);max-width:11.2in}
+
+/* Number-led facts. */
+.facts{display:flex;gap:.62in;margin-top:.3in}
+.fact{flex:1}
+.fact .v{font-family:'Martian Mono',ui-monospace,monospace;font-size:27pt;
+  letter-spacing:-.04em;line-height:1;color:var(--clear);font-feature-settings:'tnum' 1}
+.fact .v.warn{color:var(--growth)}
+.fact .k{font-size:10pt;line-height:1.4;color:var(--ink-dim);margin-top:.1in}
+
+/* Measurement table. */
+table{border-collapse:collapse;width:100%;margin-top:.26in;font-size:12pt}
+th,td{text-align:right;padding:.115in .1in;border-bottom:1px solid var(--rule)}
+th:first-child,td:first-child{text-align:left}
+thead th{font-size:9pt;font-weight:500;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--ink-faint);font-variation-settings:'wdth' 94;border-bottom:1.5px solid var(--ink)}
+tbody td{font-family:'Martian Mono',ui-monospace,monospace;font-size:11pt;
+  letter-spacing:-.02em;font-feature-settings:'tnum' 1}
+tbody td:first-child{font-family:'Archivo',sans-serif;font-size:12pt;font-style:italic}
+tr.lead td{color:var(--clear)}
+.rowkind{font-family:'Archivo',sans-serif !important;font-style:normal !important;
+  font-size:10.5pt !important;color:var(--ink-dim)}
+
+/* Two columns. */
+.cols{display:flex;gap:.7in;margin-top:.28in}
+.cols>div{flex:1}
+.colhead{font-size:9.5pt;font-weight:500;letter-spacing:.07em;text-transform:uppercase;
+  color:var(--ink-faint);font-variation-settings:'wdth' 94;margin-bottom:.13in;
+  padding-bottom:.08in;border-bottom:1px solid var(--rule)}
+
+ul{list-style:none}
+li{font-size:12pt;line-height:1.5;padding-left:.26in;position:relative;margin-bottom:.14in}
+li::before{content:"";position:absolute;left:0;top:.09in;width:.1in;height:.1in;
+  background:var(--broth)}
+li.warn::before{background:var(--growth)}
+li.ok::before{background:var(--clear)}
+
+.rule-note{font-size:11pt;line-height:1.5;color:var(--ink-dim);margin-top:.22in;
+  border-left:2px solid var(--growth);padding-left:.2in;max-width:8.6in}
+.rule-note.calm{border-left-color:var(--broth)}
+/* Anchors a closing note to the foot of the slide instead of leaving slack under it. */
+.rule-note.push{margin-top:auto;margin-bottom:.1in}
+
+/* Title slide. */
+.title-slide{justify-content:center;padding-left:.9in}
+.eyebrow{font-size:11pt;font-weight:500;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--clear);font-variation-settings:'wdth' 94;margin-bottom:.3in}
+.byline{margin-top:.5in;padding-top:.22in;border-top:1px solid var(--rule);
+  font-size:12pt;line-height:1.6;color:var(--ink-dim);max-width:8in}
+.disclaimer{position:absolute;left:.9in;right:.78in;bottom:.5in;
+  font-size:9pt;line-height:1.45;color:var(--ink-faint)}
+</style>
+</head>
+<body>
+
+<!-- 1 ------------------------------------------------------------------ -->
+<section class="slide title-slide">
+  <div class="eyebrow">EthnoHack 2026 &middot; Track 2 &middot; Natural Products for Drug Discovery</div>
+  <h1>Among hundreds of thousands<br>of plant compounds, which<br>deserve a closer look?</h1>
+  <p class="lede">We took the track question literally: three bacterial pathogens, one model each,
+     a ranked shortlist of plant-derived compounds for the bench &mdash; and a measured account
+     of exactly where that shortlist stops being evidence.</p>
+  <p class="byline">
+    Leonidas Anagnou &middot; Eleni Nasopoulou<br>
+    School of Electrical and Computer Engineering, National Technical University of Athens
+  </p>
+  <p class="disclaimer">Everything shown is a model prediction over published laboratory
+    measurements. Nothing here is a clinical claim, a statement of efficacy, or medical advice.</p>
+</section>
+
+<!-- 2 ------------------------------------------------------------------ -->
+<section class="slide">
+  <div class="head"><span>The problem</span><span class="n">02</span></div>
+  <h2>Medicine has measured a great deal of chemistry<br>against these organisms. Almost none of it came from a plant.</h2>
+  <figure>
+    <img src="../../notebooks/figures/01_plant_overlap.png" alt="Plant-derived share of tested compounds per organism">
+    <figcaption>ChEMBL MIC pull, before curation. After curation, <em>S. aureus</em> has
+      <span class="m">1,424</span> plant-derived compounds out of <span class="m">58,191</span> &mdash;
+      <span class="m">2.4%</span>. Meanwhile <span class="m">97,709</span> plant structures with a known
+      source organism carry no measurement against any of these three at all.</figcaption>
+  </figure>
+  <p class="foot">You cannot look up an experiment nobody has run. That gap is the entire
+    reason to predict rather than retrieve.</p>
+</section>
+
+<!-- 3 ------------------------------------------------------------------ -->
+<section class="slide">
+  <div class="head"><span>What we built</span><span class="n">03</span></div>
+  <h2>Three pathogens, three different cell envelopes,<br>one model each.</h2>
+  <p class="lede">We planned per-protein models. Then we measured the download, and changed
+    the project to fit the data rather than the other way round.</p>
+  <div class="facts">
+    <div class="fact"><div class="v">99.6%</div>
+      <div class="k">of MIC rows for these organisms are measured against the <b>whole organism</b>,
+        not a single protein</div></div>
+    <div class="fact"><div class="v">35</div>
+      <div class="k">single-protein targets carry any MIC at all, median <span class="m">8</span>
+        compounds &mdash; too few to train on</div></div>
+    <div class="fact"><div class="v">97,709</div>
+      <div class="k">unmeasured plant structures screened, against
+        <span class="m">58,191</span> / <span class="m">43,099</span> / <span class="m">22,907</span>
+        labelled compounds</div></div>
+  </div>
+  <div class="cols">
+    <div>
+      <div class="colhead">The three envelopes</div>
+      <ul>
+        <li><em>Staphylococcus aureus</em> &mdash; Gram-positive</li>
+        <li><em>Escherichia coli</em> &mdash; Gram-negative</li>
+        <li><em>Mycobacterium tuberculosis</em> &mdash; acid-fast, the hardest wall and the least data</li>
+      </ul>
+    </div>
+    <div>
+      <div class="colhead">What the model therefore claims</div>
+      <p class="body">Whether a compound stops a given bacterium growing. It says nothing
+        about mechanism, and we do not let it pretend otherwise. The protein layer annotates
+        a shortlist; it never ranks one.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 4 ------------------------------------------------------------------ -->
+<section class="slide">
+  <div class="head"><span>How it is evaluated</span><span class="n">04</span></div>
+  <h2>Holding out chemical scaffolds is not enough.<br>We hold out every plant-derived compound.</h2>
+  <p class="lede">We cluster first and split the clusters, so no compound and no chemical
+    scaffold appears on both sides of a split. The model cannot pass by having nearly seen
+    the answer.</p>
+  <figure>
+    <img src="../../notebooks/figures/03_nearest_neighbour.png" alt="Distribution of nearest-training-compound Tanimoto for the scaffold test set and the plant holdout">
+    <figcaption>Removing shared ring skeletons removes none of the resemblance that matters.
+      The median held-out <b>scaffold-test</b> compound still has a close neighbour in training
+      (<em>S. aureus</em>: Tanimoto <span class="m">0.680</span>); the median <b>plant</b>
+      compound sits far further out (<span class="m">0.461</span>). Only
+      <span class="m">3.4%</span> of plant compounds have a near-twin in training, against
+      <span class="m">13.5%</span> of scaffold-test compounds.</figcaption>
+  </figure>
+  <p class="foot">That distance is the whole problem &mdash; and it is why a nearest-training
+    Tanimoto is printed next to every single score we ship.</p>
+</section>
+
+<!-- 5 ------------------------------------------------------------------ -->
+<section class="slide">
+  <div class="head"><span>What it scores</span><span class="n">05</span></div>
+  <h2>AUROC falls on the plant holdout for every pathogen.<br>That is the number we rank on.</h2>
+  <table>
+    <thead>
+      <tr><th>Pathogen</th><th>Validation</th><th>Scaffold test</th><th>Plant holdout</th>
+          <th>95% CI</th><th>Plant base rate</th><th>P@10%</th><th>Enrichment, top 5%</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><em>Staphylococcus aureus</em></td><td>0.880</td><td>0.863</td>
+          <td class="blue">0.719</td><td>0.689&ndash;0.749</td><td>0.253</td><td>0.570</td><td>2.45x</td></tr>
+      <tr><td><em>Escherichia coli</em></td><td>0.882</td><td>0.903</td>
+          <td class="blue">0.682</td><td>0.609&ndash;0.750</td><td>0.090</td><td>0.299</td><td>5.03x</td></tr>
+      <tr><td><em>Mycobacterium tuberculosis</em></td><td>0.846</td><td>0.815</td>
+          <td class="blue">0.629</td><td>0.582&ndash;0.677</td><td>0.237</td><td>0.435</td><td>2.29x</td></tr>
+    </tbody>
+  </table>
+  <div class="cols">
+    <div>
+      <div class="colhead">What this buys a lab</div>
+      <p class="body">Precision at the top of the list is what a chemist spends money against.
+        On <em>S. aureus</em>, <span class="m">57%</span> of the top tenth are active against a
+        <span class="m">25%</span> base rate. On <em>E. coli</em>, five times the hit rate of
+        picking at random. The claim is not a cure. It is a shorter queue for the bench.</p>
+    </div>
+    <div>
+      <div class="colhead">One thing we will not smooth over</div>
+      <p class="body">These rungs are <b>not</b> a tidy descending staircase. <em>E. coli</em>
+        scores <span class="m">higher</span> on the scaffold test (<span class="m">0.903</span>)
+        than on validation (<span class="m">0.882</span>). The claim we can defend is narrower
+        and still the one that matters: <b>the plant holdout is consistently the hardest of the
+        three, for every pathogen</b> &mdash; and it is the only one that measures what a plant
+        screen actually asks.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 6 ------------------------------------------------------------------ -->
+<section class="slide">
+  <div class="head"><span>The deliverable</span><span class="n">06</span></div>
+  <h2>Every score travels with its distance<br>from anything the model has seen.</h2>
+  <figure>
+    <img src="../../notebooks/figures/05_applicability_domain.png" alt="Calibrated probability against nearest-training Tanimoto for every shortlisted candidate">
+    <figcaption>The dashed line is the applicability domain at Tanimoto
+      <span class="m">0.328</span> &mdash; not chosen for looks, but the 25th percentile of the plant
+      holdout, the most distant set on which we actually measured the model. Below it, candidates
+      are <span class="red">struck through</span>: we publish them in a separate tier that states in
+      its own words that its scores are not evidence of activity. We do not rank them.</figcaption>
+  </figure>
+  <p class="foot">Per pathogen: <span class="m">50</span> in-domain rows and <span class="m">15</span>
+    exploratory, each with predicted score, nearest-training Tanimoto, source plant and family,
+    and a literature DOI.</p>
+</section>
+
+<!-- 7 ------------------------------------------------------------------ -->
+<section class="slide">
+  <div class="head"><span>An unexpected observation</span><span class="n">07</span></div>
+  <h2>The chemistry of each shortlist tracks<br>the cell envelope it was selected against.</h2>
+  <p class="lede">The model was given fingerprints and physicochemical descriptors.
+    Nobody told it about cell walls.</p>
+  <div class="facts">
+    <div class="fact"><div class="v">30 / 50</div>
+      <div class="k"><em>M. tuberculosis</em>, acid-fast &mdash; alkaloids
+        (<span class="m">17</span>) and terpenoids (<span class="m">13</span>)</div></div>
+    <div class="fact"><div class="v">21 / 50</div>
+      <div class="k"><em>E. coli</em>, Gram-negative &mdash; peptides, sugars and fatty acids</div></div>
+    <div class="fact"><div class="v">19 / 50</div>
+      <div class="k"><em>S. aureus</em>, Gram-positive &mdash; shikimates and phenylpropanoids</div></div>
+  </div>
+  <p class="rule-note push">We report this as a <b>hypothesis worth testing, not a finding</b>. It
+    partly reflects which compounds LOTUS has annotated, and three shortlists of fifty are not
+    enough to establish it. It is on this slide because it is the most interesting thing the
+    screen produced, and because the way to settle it is to go and look.</p>
+</section>
+
+<!-- 8 ------------------------------------------------------------------ -->
+<section class="slide">
+  <div class="head"><span>A negative result</span><span class="n">08</span></div>
+  <h2>The thing we set out to show did not replicate.<br>We are reporting it anyway.</h2>
+  <p class="lede">The hypothesis: holding out whole plant <b>families</b> should be harder than
+    holding out chemical <b>scaffolds</b>, because families share biosynthesis. We measured the
+    gap four separate times, in a standalone experiment on
+    <span class="m">400&ndash;823</span> compounds &mdash; smaller than, and separate from, the
+    main pipeline above.</p>
+  <table>
+    <thead>
+      <tr><th>Measurement</th><th>Family &minus; scaffold</th><th>Paired sd</th>
+          <th>Family worse in</th><th>Verdict</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><em>S. aureus</em></td><td>&minus;0.073</td><td>0.067</td><td>8 of 10</td>
+          <td class="rowkind">direction holds</td></tr>
+      <tr><td><em>E. coli</em></td><td class="red">+0.004</td><td>0.139</td><td>2 of 10</td>
+          <td class="rowkind red">reverses</td></tr>
+      <tr><td><em>M. tuberculosis</em></td><td>&minus;0.097</td><td>0.158</td><td>7 of 10</td>
+          <td class="rowkind">spread exceeds effect</td></tr>
+      <tr><td>Earlier exploratory run</td><td>&minus;0.071</td><td>&mdash;</td><td>&mdash;</td>
+          <td class="rowkind">not reproduced at scale</td></tr>
+    </tbody>
+  </table>
+  <p class="rule-note">The direction is usually negative; the magnitude never settles, and on
+    <em>E. coli</em> it reverses outright. Two of the three estimates rest on test sets of
+    roughly a hundred compounds, which is the likely reason they say so little.
+    <b>So it goes in as an honest negative, not as our contribution</b> &mdash; and the
+    cluster-level scaffold split, which does replicate cleanly on all three organisms, is what
+    carries the evaluation on the previous slides.</p>
+</section>
+
+<!-- 9 ------------------------------------------------------------------ -->
+<section class="slide">
+  <div class="head"><span>What is wrong with it</span><span class="n">09</span></div>
+  <h2>The part we would rather a judge heard from us<br>than found alone.</h2>
+  <div class="cols">
+    <div>
+      <div class="colhead">Defects in the shipped shortlists</div>
+      <ul>
+        <li class="warn">The <b>top-ranked candidate in all three</b> is a near-copy of a training
+          compound &mdash; Tanimoto <span class="m">0.986</span> / <span class="m">0.982</span> /
+          <span class="m">0.976</span>. In two of the three it is the same non-plant polyketide,
+          with no source plant and no DOI.</li>
+        <li class="warn">One row ships at Tanimoto <span class="m">1.000</span>, correctly flagged
+          as a fingerprint twin of a training compound.</li>
+        <li class="warn">Missing plant provenance on <span class="m">12</span> /
+          <span class="m">8</span> / <span class="m">3</span> of 50 rows. DOI coverage
+          <span class="m">38</span> / <span class="m">42</span> / <span class="m">47</span> of 50.</li>
+        <li class="warn">Per-compound attributions came out numerically impossible, so we
+          withhold that column rather than show it.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="colhead">Limits of the method itself</div>
+      <ul>
+        <li>Labels carry publication bias: most published MIC values sit at or below the active
+          threshold, because inactive compounds are reported less often.</li>
+        <li>No mechanism. A whole-organism readout cannot tell you what a compound binds.</li>
+        <li>Model and shortlist stages have <b>not</b> been independently reproduced; curation
+          and splits have.</li>
+        <li>No experimental validation of any kind. Not one of these compounds has been put
+          on a plate by us.</li>
+      </ul>
+    </div>
+  </div>
+  <p class="rule-note push">A screen that only reports its wins is not a result.</p>
+</section>
+
+<!-- 10 ----------------------------------------------------------------- -->
+<section class="slide">
+  <div class="head"><span>Reproducibility, credit, and what is next</span><span class="n">10</span></div>
+  <h2>Every number on the site and in this deck<br>is read from a committed result file.</h2>
+  <div class="facts">
+    <div class="fact"><div class="v">57</div>
+      <div class="k">ledger metrics re-run end to end from the raw downloads on a second
+        machine &mdash; all matched to the last decimal</div></div>
+    <div class="fact"><div class="v">12</div>
+      <div class="k">pipeline stages, each writing its config hash and metrics to
+        <span class="m">results/runs.jsonl</span></div></div>
+    <div class="fact"><div class="v">0</div>
+      <div class="k">numbers typed by hand into the web app; it reads
+        <span class="m">results/</span> at build time and retrains nothing</div></div>
+  </div>
+  <div class="cols">
+    <div>
+      <div class="colhead">Data and licences</div>
+      <ul>
+        <li class="ok"><b>ChEMBL</b> (CC BY-SA) &mdash; the MIC activity labels, whole-organism.</li>
+        <li class="ok"><b>LOTUS</b> (CC0) &mdash; the plant-to-compound edge, with references.</li>
+        <li class="ok"><b>GBIF</b> &mdash; cross-check of which source organisms are plants.</li>
+        <li class="ok"><b>NPASS</b> was evaluated and <b>dropped</b>: its MIC table is a copy of
+          ChEMBL, so we cite ChEMBL directly.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="colhead">What is next</div>
+      <ul>
+        <li>The protein layer, from the IC50 and Ki download that already exists.</li>
+        <li><b>The honest next step is not a fourth pathogen.</b> It is putting ten of these on
+          a real plate and publishing the hit rate next to the predicted one &mdash; including if
+          it is worse.</li>
+      </ul>
+      <p class="rule-note calm">The plant records carry traditional knowledge. Anything built on
+        this carries the Nagoya Protocol and Local Contexts with it as a condition, not a
+        footnote. Generative-AI assistance is disclosed in the repository README.</p>
+    </div>
+  </div>
+</section>
+
+</body>
+</html>
