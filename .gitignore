@@ -242,3 +242,7 @@ data/
 # for no large files in git. The fold captures in the README are small and stay.
 docs/screenshots/desktop.png
 docs/screenshots/mobile.png
+
+# Local only: describes a team member's unpublished work, which is hers to
+# publish or not. The repo is public.
+.claude/memory/teammate.md

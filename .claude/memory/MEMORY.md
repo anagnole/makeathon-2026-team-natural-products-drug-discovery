@@ -1,5 +1,5 @@
 - [EthnoHack context](ethnohack_context.md): team of two, private repo with placeholder name, CLAUDE.md and memory in the repo, organiser/ local only, open points
-- [Teammate](teammate.md): strong computational drug discovery ML background; her own work stays unpublished, detail is local only
+- Teammate: notes on who owns which stream are local only, in an untracked `teammate.md`
 - [Repo conventions](repo_conventions.md): notebooks/pipeline/ledger/figures layout reused from the AVR repo; written fresh, not copied
 - [Data findings](data_findings.md): 99.6% of ChEMBL MIC is whole-organism, not per-protein; the filters that silently empty the dataset
 - [Open choices](feedback_open_choices.md): task+models+splits settled on the 2 Nov call; team name still open; garbled minutes bred wrong readings
