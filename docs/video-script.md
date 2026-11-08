@@ -146,11 +146,11 @@ and do not add a claim the page does not make. Nothing here is a clinical claim.
 
 *Back on the shortlist page.*
 
-> The same model, read three ways. Hold out random compounds and it looks strong,
-> around 0.91. Hold out whole chemical scaffolds, around 0.86. Hold out every
-> plant-derived compound — which is what a plant screen actually asks of it — and
-> it drops to between 0.63 and 0.72. The third number is the honest one. It is
-> the only one measured on the task in the title of this project.
+> The same model, read three ways. On validation it sits between 0.85 and 0.88.
+> Hold out whole chemical scaffolds and it reads between 0.82 and 0.90. Hold out
+> every plant-derived compound — which is what a plant screen actually asks of
+> it — and it drops to between 0.63 and 0.72. The third number is the honest one.
+> It is the only one measured on the task in the title of this project.
 
 ### 13 · How far it had to reach
 
@@ -193,10 +193,11 @@ and do not add a claim the page does not make. Nothing here is a clinical claim.
 
 > This one we did not expect. The biosynthetic pathways of the shortlists track
 > each pathogen's cell envelope. Alkaloids and terpenoids dominate the acid-fast
-> list, twenty-nine of fifty. Peptides, sugars and fatty acids come up for the
-> Gram-negative one. The model saw fingerprints and descriptors. Nobody told it
-> about cell walls. We report it as a hypothesis worth testing, not a finding,
-> because it partly reflects which compounds LOTUS has annotated.
+> list, seventeen and thirteen, thirty of the fifty. Peptides, sugars and fatty
+> acids come up for the Gram-negative one, twenty-one of fifty. The model saw
+> fingerprints and descriptors. Nobody told it about cell walls. We report it as
+> a hypothesis worth testing, not a finding, because it partly reflects which
+> compounds LOTUS has annotated.
 
 ## V. What is wrong with it
 
@@ -206,8 +207,10 @@ and do not add a claim the page does not make. Nothing here is a clinical claim.
 
 > We set out to show that holding out whole plant families is harder than holding
 > out scaffolds. Measured four separate times, the direction is usually right and
-> the magnitude never settles, with a repeat-to-repeat spread wider than the
-> effect itself. So it goes in as a negative result, not as our contribution.
+> the magnitude never settles. Even on this one, the organism where the gap came
+> out widest, the family split was the worse of the two in only seven of the ten
+> repeats. On *E. coli* it came out the other way. So it goes in as a negative
+> result, not as our contribution.
 
 ### 18 · What is wrong with it
 
@@ -255,5 +258,11 @@ and do not add a claim the page does not make. Nothing here is a clinical claim.
 - The strip at the bottom is the same stock as the header and footer, so it reads
   as instrument chrome if it stays in frame. Press **H** if you would rather it
   did not.
+- Beat 17 is the one place the voiceover goes past the screen. The panel shows
+  the *M. tuberculosis* run only; the four measurements and the *E. coli*
+  reversal (+0.004, the family split worse in 2 of 10 repeats) are in
+  `results/runs.jsonl`. The three standard deviations printed there are
+  per-split, not the paired spread, so do not read them out as the repeat-to-
+  repeat scatter: on screen they are smaller than the gap beside them.
 - No clinical claims in the voiceover. These are model predictions over published
   measurements, and no dose, preparation or use is implied.

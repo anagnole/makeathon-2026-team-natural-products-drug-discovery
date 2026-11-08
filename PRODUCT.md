@@ -50,9 +50,21 @@ distance from the training set next to every single row, and refuses to present
 out-of-domain compounds as candidates: they are published in a separate tier that
 states in its own words that its scores are not evidence of activity.
 
-The honest headline is not "50 drug candidates". It is a measured evaluation ladder, the same model scores ~0.91 on a random split, ~0.86 when whole chemical scaffolds are
-held out, and 0.63–0.72 when plant-derived compounds are held out entirely, and a
-shortlist that declares its own limits. The applicability-domain cutoff is derived from
+The honest headline is not "50 drug candidates". It is a measured evaluation ladder and a
+shortlist that declares its own limits. The tuned model (notebook 04) reads 0.85–0.88 on
+validation, 0.82–0.90 on a test set with whole chemical scaffolds held out, and 0.63–0.72
+when plant-derived compounds are held out of training entirely. Only the last of those
+three is the question a plant screen actually asks.
+
+Two cautions, both load-bearing:
+
+- The ladder is not monotonic. *E. coli* scores higher on the scaffold test (0.903) than
+  on validation (0.882), so the defensible claim is that the plant holdout is consistently
+  the hardest of the three for every pathogen, not that each rung is harder than the last.
+- Notebook 03's figure `03_evaluation_ladder` shows a *different* ladder (around 0.91
+  random, 0.86 scaffold, 0.62–0.66 plant) from a deliberately untuned triage screen that
+  notebook 03 says must not be quoted as a result. Never put 03's random-split number
+  beside 04's plant holdout: different models, and the mix overstates the drop. The applicability-domain cutoff is derived from
 that hardest measurement, not chosen for looks.
 
 ## Operating Context
@@ -144,10 +156,11 @@ Real, committed, citable:
   *M. tuberculosis* 0.629 / 0.435 / 2.29x. Plant base rates 25.3% / 9.0% / 23.7%.
 - A measured biological finding: the biosynthetic pathways of the shortlisted compounds
   track each pathogen's cell envelope, alkaloids and terpenoids dominate the acid-fast
-  *M. tuberculosis* list (29 of 50), peptides, sugars and fatty acids appear for
-  Gram-negative *E. coli* (19 of 50), phenolics for Gram-positive *S. aureus*. The model
-  was never given cell-wall information. Must be presented as a hypothesis, with the
-  caveat that it partly reflects LOTUS annotation coverage.
+  *M. tuberculosis* list (30 of 50: 17 alkaloids, 13 terpenoids), peptides, sugars and
+  fatty acids appear for Gram-negative *E. coli* (21 of 50), phenolics for Gram-positive
+  *S. aureus* (19 of 50 shikimates and phenylpropanoids). The model was never given
+  cell-wall information. Must be presented as a hypothesis, with the caveat that it
+  partly reflects LOTUS annotation coverage.
 
 Absent, and not to be fabricated: compound images or structure renderings beyond what
 can be drawn from SMILES in the browser; any experimental validation; any user, citation

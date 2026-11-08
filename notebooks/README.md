@@ -20,11 +20,24 @@ the readout, and the demotion of the plant-family split to a secondary analysis.
 | [`04_models.ipynb`](04_models.ipynb) | Screens every feature set against two model families over three seeds, tunes only the winner with Optuna, calibrates it on validation with the model frozen, then scores once on both held-out sets | `data/processed/04_models_<organism>.pkl`, `04_scores_<organism>_<set>.parquet`; figures `04_*`; ledger entries |
 | [`05_results.ipynb`](05_results.ipynb) | Both evaluations side by side with the argument for which should lead, permutation feature importance, the applicability domain, and the ranked shortlist per pathogen with diversity selection | `results/shortlist_<organism>.csv`; figures `05_*`; ledger entries |
 
-The two figures that carry the argument are `03_evaluation_ladder` and `03_nearest_neighbour`. The
-same model scores around 0.91 on a random split, around 0.86 on a scaffold split and 0.61 to 0.66
-on plant compounds held out of training. The second figure shows why: a scaffold split holds out
-scaffolds, not analogues, so the median held-out compound still has a close neighbour in training,
-while plant compounds sit much further out.
+The two figures that carry the argument are `03_evaluation_ladder` and `03_nearest_neighbour`.
+
+**Read the ladder figure in its own frame.** It is drawn from notebook 03's cheap untuned screen,
+one small Random Forest per feature set, and notebook 03 says in its own text that nothing there
+should be quoted as a final result. Within that screen the same model reads around 0.91 on a random
+split, around 0.86 on a scaffold split and around 0.62 to 0.66 on the plant holdout. Those three
+numbers are comparable only to each other.
+
+**The reported result is notebook 04's**, from the tuned and calibrated model: 0.85 to 0.88 on
+validation, 0.82 to 0.90 on the scaffold test and 0.63 to 0.72 on the plant holdout, per-pathogen
+numbers in `results/LEDGER.md`. Those readings are not a monotonic ladder — *E. coli* scores higher
+on the scaffold test than on validation — but the plant holdout is the hardest of the three for
+every pathogen. Do not quote 03's random-split number alongside 04's plant holdout: they come from
+different models, and mixing them overstates the drop.
+
+`03_nearest_neighbour` shows why the plant holdout is hard: a scaffold split holds out scaffolds,
+not analogues, so the median held-out compound still has a close neighbour in training, while plant
+compounds sit much further out.
 
 ## Shared code
 
