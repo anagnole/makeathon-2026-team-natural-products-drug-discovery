@@ -52,18 +52,17 @@ Then open <http://localhost:3100>.
 
 ## Record mode
 
-The demo segment of the pitch is narrated over this page, so the page can drive
-itself. Press **R** on either page to enter record mode, then **→** for the next beat,
-**←** to go back, **H** to hide the strip for a clean frame, **Esc** to leave.
+**Not shipped.** `components/Record.tsx` drove the page from the keyboard for a
+screen-recorded take: twenty beats covering the whole pitch, every state change
+on a key so nothing in a take depended on finding a well with the mouse.
 
-Twenty beats covering the whole pitch, not just the demo: the question and the
-team, the problem, the plate reading itself, a well, the applicability-domain
-boundary, each of the three pathogens, four stops on `/pipeline` and back, the
-evaluation ladder, the chemical-space map, the yield, the biology, the negative
-result, the defects, what it is for, and who built it. Beats 08-11 cross to
-`/pipeline` and the run survives the navigation. Every state change is on a key,
-so nothing in a take depends on finding a well with the mouse. What to say over
-each beat is in [`docs/video-script.md`](../docs/video-script.md).
+It is deliberately not mounted on either page. The submitted pitch is slides with
+a voiceover rather than a filmed walkthrough, and on a public site a stray `R`
+keypress would have hijacked a visitor's scroll and put a presenter strip over the
+argument. The component is kept because it is the only record of the running order
+the two surfaces were built around; mount it in `app/page.tsx` and
+`app/pipeline/page.tsx` to use it again. What was said over each beat is in
+[`docs/video-script.md`](../docs/video-script.md).
 
 To produce the static site, which is what gets deployed:
 

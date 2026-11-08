@@ -1,6 +1,5 @@
 import Link from "next/link";
 import Plate from "@/components/Plate";
-import Record from "@/components/Record";
 import Scale from "@/components/Scale";
 import Space from "@/components/Space";
 import Title from "@/components/Title";
@@ -35,7 +34,7 @@ export default function Home() {
 
         <Problem pathogens={pathogens} />
 
-        <section id="screen" className="scroll-mt-6 pt-16 lg:pt-20">
+        <section id="screen" className="scroll-mt-6 pt-10 lg:pt-14">
           <Plate pathogens={pathogens}>
             <h1 className="opens display text-thesis leading-[0.95] font-semibold tracking-[-0.035em] text-balance">
               {count(screened)} plant compounds screened.{" "}
@@ -67,8 +66,6 @@ export default function Home() {
       </main>
 
       <PlateFoot />
-      {/* Press R to walk the pitch's running order from the keyboard. */}
-      <Record />
     </>
   );
 }
@@ -86,19 +83,19 @@ function Next({ pathogens }: { pathogens: Pathogen[] }) {
   const items = [
     {
       title: "What a laboratory does with it tomorrow",
-      body: `Fifty compounds, each with a source plant, a reference and a distance, is a bench queue rather than a literature search. At ${dec(best.enrichmentTop5, 2)}× enrichment on ${best.short}, twenty syntheses expect several hits where random expects one. None of this has been near a laboratory yet.`,
+      body: `A bench queue rather than a literature search: fifty compounds, each with a source plant, a reference and a distance. At ${dec(best.enrichmentTop5, 2)}× enrichment on ${best.short}, twenty syntheses expect several hits where random expects one. None of it has been near a laboratory yet.`,
     },
     {
       title: "The protein layer we could not build",
-      body: "99.6% of the MIC rows are whole-organism, so this predicts growth inhibition and says nothing about mechanism. Protein-level activity exists in ChEMBL under IC50 and Ki: a separate, smaller download, and the thing that would turn a shortlist into a hypothesis about a target.",
+      body: "This predicts growth inhibition and says nothing about mechanism. Protein-level activity exists in ChEMBL under IC50 and Ki, a separate and much smaller download, and it is what would turn a shortlist into a hypothesis about a target.",
     },
     {
       title: "The measurement that would settle it",
-      body: "Every number here is retrospective. The honest next step is not a fourth pathogen. It is putting ten of these on a real plate and publishing the hit rate next to the predicted one, including if it is worse.",
+      body: "Every number here is retrospective. The honest next step is not a fourth pathogen. It is putting ten of these on a real plate and publishing the hit rate beside the predicted one, including if it is worse.",
     },
     {
       title: "Whose knowledge this is",
-      body: "The plant records come from published literature, and traditional knowledge sits behind many of them. Anything built on this carries the Nagoya Protocol and Local Contexts as a condition of using the data, not as a footnote.",
+      body: "Traditional knowledge sits behind many of the published plant records. Anything built on this carries the Nagoya Protocol and Local Contexts as a condition of use, not as a footnote.",
     },
   ];
 
@@ -161,10 +158,9 @@ function Credits({
 
         <p className="mt-7 border-t border-[var(--hairline)] pt-5 text-[var(--text-small)] leading-relaxed text-ink-dim">
           Both at the School of Electrical and Computer Engineering, National
-          Technical University of Athens. Run{" "}
-          <span className="measure">{provenance.runId.split("_")[0]}</span>,
-          commit <span className="measure">{provenance.commit}</span>, config{" "}
-          <span className="measure">{provenance.configHash}</span>.
+          Technical University of Athens. Which run produced the numbers on this
+          page, and how to re-run it, is stated under{" "}
+          <a href="#limits">what is wrong with it</a>.
         </p>
 
         <dl className="mt-7 grid gap-x-10 gap-y-6 border-t border-[var(--hairline)] pt-5 sm:grid-cols-3">
@@ -256,7 +252,9 @@ function PlateEdge({
   reproduction: ReturnType<typeof loadReproduction>;
 }) {
   return (
-    <header className="border-b border-[var(--hairline)] bg-void">
+    /* Sticky: on a page this long the only way back to the other surface is
+       the link in this strip, and hunting for it means scrolling to the top. */
+    <header className="sticky top-0 z-50 border-b border-[var(--hairline)] bg-void">
       <div className="mx-auto flex max-w-[96rem] flex-wrap items-center justify-between gap-x-8 gap-y-1.5 px-4 py-3.5 sm:px-8 lg:px-12">
         <p className="legend">
           EthnoHack 2026 · Track 2
@@ -265,12 +263,11 @@ function PlateEdge({
             · Natural Products for Drug Discovery
           </span>
         </p>
-        {/* On a phone this strip would run five lines and put a run hash in
+        {/* On a phone this strip would run five lines and put provenance in
             front of the argument. The same facts are stated in full further
             down, under how to reproduce this page. */}
         <p className="hidden text-[var(--text-legend)] text-ink-dim sm:block">
-          <Link href="/pipeline/">How it was built</Link> · commit{" "}
-          <span className="measure">{provenance.commit}</span>
+          <Link href="/pipeline/">How it was built</Link>
           <span className="hidden [@media(min-width:1400px)]:inline">
             {" "}
             · {reproduction.metrics} curation and split metrics reproduced on a
@@ -301,7 +298,7 @@ function Section({
        scaled out of nothing. */
     <section
       id={id}
-      className="relative mt-24 scroll-mt-6 pt-10 lg:mt-32"
+      className="relative mt-16 scroll-mt-6 pt-8 lg:mt-20"
     >
       <span
         aria-hidden="true"
@@ -345,7 +342,7 @@ function Ladder({ pathogens }: { pathogens: Pathogen[] }) {
     <Section
       id="ladder"
       title="The same model, read three ways. Only the last one answers the question."
-      lede="Hold out random compounds and the model looks strong. Hold out every plant-derived compound, which is what a plant screen actually asks of it, and it drops by a sixth."
+      lede="Scored on validation, and on a test set with whole chemical scaffolds held out, the model looks strong. Hold out every plant-derived compound, which is what a plant screen actually asks of it, and it drops by a sixth. That last reading is the hardest of the three for all three pathogens."
     >
       <div>
         {pathogens.map((p) => (
@@ -439,19 +436,26 @@ function Distance({ pathogens }: { pathogens: Pathogen[] }) {
                 },
               ]}
             />
+            {/* The scale is the same on all three rows, so what it means is
+                said once underneath rather than three times over. */}
             <p className="mt-1.5 text-[var(--text-small)] leading-relaxed text-ink-dim">
-              Similarity to the nearest compound the model was trained on, where{" "}
-              <span className="measure">1.000</span> is an identical fingerprint
-              and <span className="measure">0.000</span> nothing in common.{" "}
               {count(p.distinctScaffolds)} distinct ring skeletons across{" "}
               {count(p.labelled)} measured compounds.
             </p>
           </Row>
         ))}
         <p className="prose mt-6 max-w-[76ch] border-t border-[var(--hairline)] pt-5">
-          The read line is set at the 25th percentile of the plant holdout: the
-          most distant set on which this model&rsquo;s performance was actually
-          measured. Candidates beyond it are published, not ranked.
+          Similarity to the nearest compound the model was trained on, where{" "}
+          <span className="measure">1.000</span> is an identical fingerprint and{" "}
+          <span className="measure">0.000</span> nothing in common. The read
+          line is <em>one</em> cutoff, not three:{" "}
+          <span className="measure">{tanimoto(pathogens[0].domainCutoff)}</span>,
+          the 25th percentile of the <em>S. aureus</em> plant holdout, which is
+          the most distant set on which this model&rsquo;s performance was
+          actually measured. It is drawn on all three scales so the three can be
+          read against each other, and applying one organism&rsquo;s cutoff to
+          the other two is a choice we made rather than a measurement.
+          Candidates beyond it are published, not ranked.
         </p>
       </div>
     </Section>
@@ -841,14 +845,6 @@ function Limits({
           any MIC at all. The model predicts whether a compound stops a
           bacterium growing. It says nothing about mechanism.
         </p>
-        <p>
-          <strong className="font-semibold">
-            Which split should lead is still an open call on this team.
-          </strong>{" "}
-          The scaffold figures and the plant-holdout figures are both on this
-          page and neither is presented as the headline, because that decision
-          has not been made.
-        </p>
         <p className="text-ink-dim">
           Nothing here is a clinical or therapeutic claim. These are model
           predictions over published measurements and traditional-use records,
@@ -880,18 +876,15 @@ function Limits({
             <h3 className="legend mb-2.5">How to reproduce this page</h3>
             <p>
               Every number above is read at build time from{" "}
-              <span className="measure">results/</span> in the repository, and
-              never typed into this page by hand. The shortlists come from run{" "}
-              <span className="measure">
-                {provenance.runId.split("_")[0]}
-              </span>{" "}
-              at commit <span className="measure">{provenance.commit}</span>,
-              config <span className="measure">{provenance.configHash}</span>.
-              The curation and split stages were re-run end to end from the raw
-              downloads on a second machine, and all{" "}
-              <span className="measure">{reproduction.metrics}</span> of the
-              ledger metrics they write matched to the last decimal. The model
-              and shortlist stages have not been reproduced that way yet.
+              <span className="measure">results/</span>, never typed in by hand.
+              The shortlists come from configuration{" "}
+              <span className="measure">{provenance.configHash}</span> in{" "}
+              <span className="measure">results/runs.jsonl</span>, which records
+              every rule the stage was given. The curation and split stages were
+              re-run end to end from the raw downloads on a second machine, and
+              all <span className="measure">{reproduction.metrics}</span> ledger
+              metrics matched to the last decimal. The model and shortlist
+              stages have not been reproduced that way yet.
             </p>
           </div>
         </div>

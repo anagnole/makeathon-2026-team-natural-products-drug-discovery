@@ -68,6 +68,10 @@ html {
   overflow-x: clip;
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
+  /* The header strip is sticky, so an anchor that scrolled flush to the top
+     would land underneath it. This clears it in one place rather than making
+     every section carry its own `scroll-mt`. */
+  scroll-padding-top: 4.5rem;
   /* The ground is on `html` as well as `body` so that the cut to /pipeline
      mid-take cannot flash a white canvas between the two documents. On a dark
      surface that flash is a single bright frame, and a single bright frame is

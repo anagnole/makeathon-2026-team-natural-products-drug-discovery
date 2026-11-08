@@ -3,6 +3,13 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 /**
+ * NOT MOUNTED. This was the presenter aid for a screen-recorded demo segment,
+ * and it is deliberately not rendered by either page: on the published site a
+ * stray `r` keypress would have hijacked the scroll and put a beat strip over
+ * the argument. The pitch is slides with a voiceover instead. Kept because it
+ * is the only record of the running order the two surfaces were built around;
+ * mount it in `app/page.tsx` and `app/pipeline/page.tsx` to use it again.
+ *
  * Record mode: the running order of the pitch video, driven from the keyboard.
  *
  * The demo segment of the pitch is two to three minutes of narration over this
@@ -79,7 +86,9 @@ const BEATS: Beat[] = [
   // How it was built. Four stops on the other surface rather than all twelve:
   // the pipeline page is the written record, and the video quotes from it.
   { title: "How it was built", page: "/pipeline/", anchor: "question" },
-  { title: "What the data actually said", page: "/pipeline/", anchor: "curation" },
+  // Stage 03, not 04: the narration over this beat is the survey's numbers,
+  // the ones that killed the per-protein plan. See docs/video-script.md.
+  { title: "What the data actually said", page: "/pipeline/", anchor: "survey" },
   { title: "Splitting it honestly", page: "/pipeline/", anchor: "splits" },
   { title: "Every number has a run behind it", page: "/pipeline/", anchor: "ledger" },
 

@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Record from "@/components/Record";
 import type { ReactNode } from "react";
 import {
   Caption,
@@ -56,7 +55,8 @@ export default function Pipeline() {
 
   return (
     <>
-      <header className="border-b border-[var(--hairline)] bg-void">
+      {/* Sticky, as on the other surface: this strip is the way back. */}
+      <header className="sticky top-0 z-50 border-b border-[var(--hairline)] bg-void">
         <div className="mx-auto flex max-w-[96rem] flex-wrap items-center justify-between gap-x-8 gap-y-1.5 px-4 py-3.5 sm:px-8 lg:px-12">
           <p className="legend">
             EthnoHack 2026 · Track 2
@@ -104,8 +104,6 @@ export default function Pipeline() {
           </p>
         </div>
       </footer>
-      {/* The run spans both surfaces; this is the other half of it. */}
-      <Record />
     </>
   );
 }
@@ -115,7 +113,7 @@ export default function Pipeline() {
 function Opening({ pathogens }: { pathogens: Pathogen[] }) {
   const first = pathogens[0];
   return (
-    <section className="relative pt-12 pb-20 lg:pt-16 lg:pb-28">
+    <section className="relative pt-10 pb-14 lg:pt-12 lg:pb-16">
       <BeatNumber n="" />
       <div className="grid gap-x-14 gap-y-10 lg:grid-cols-[minmax(0,34rem)_minmax(0,1fr)]">
         <div>
@@ -188,7 +186,11 @@ function BeatNumber({ n }: { n: string }) {
 function BeatSection({ beat, children }: { beat: Beat; children: ReactNode }) {
   return (
     <section
-      className="relative scroll-mt-4 border-t border-[var(--hairline)] py-14 lg:min-h-[78vh] lg:py-20"
+      /* No min-height. Each beat used to be held to 78vh so it filled the
+         frame of a screen-recorded take; the pitch is slides now, and on a
+         page that is read rather than filmed that floor only added scroll
+         between one claim and the next. */
+      className="relative scroll-mt-4 border-t border-[var(--hairline)] py-10 lg:py-14"
       id={beat.id}
     >
       <BeatNumber n={beat.n} />
@@ -873,8 +875,11 @@ function figure(id: string, ctx: Context): ReactNode {
           <Panel title="Eighteen untuned fits per pathogen, and the combination that won">
             {pathogens.map((p) => (
               <Strain key={p.slug} pathogen={p}>
+                {/* Where the eighteen come from is step 01 and the panel
+                    title; saying it again on each of three rows was three
+                    copies of one sentence. */}
                 <Cells
-                  label="fits: three feature sets, two model families, three seeds"
+                  label="fits, untuned"
                   marked={3}
                   markedFrom={
                     FEATURE_ORDER.indexOf(p.featureSet) * 6 +
@@ -969,35 +974,23 @@ function figure(id: string, ctx: Context): ReactNode {
             station, and the fall to the right is what a plant screen actually
             asks of this model.
           </Caption>
-          <Panel title="What the hardest reading buys a laboratory">
-            {pathogens.map((p) => (
-              <Strain key={p.slug} pathogen={p}>
-                <Facts>
-                  <Fact
-                    label="Precision, top 10%"
-                    note={`against ${pct(p.plantBaseRate)} at random`}
-                    value={pct(p.plantPrecisionAt10)}
-                  />
-                  <Fact
-                    label="Enrichment, top 5%"
-                    note={`ceiling ${dec(1 / p.plantBaseRate, 1)}× at this base rate`}
-                    tone="broth"
-                    value={`${dec(p.enrichmentTop5, 2)}×`}
-                  />
-                  <Fact
-                    label="Precision, top 5%"
-                    note={`${Math.round(p.precisionTop5 * 20)} of every 20 syntheses`}
-                    value={pct(p.precisionTop5)}
-                  />
-                  <Fact
-                    label="Domain cutoff"
-                    note="25th percentile of the plant holdout"
-                    tone="dim"
-                    value={tanimoto(p.domainCutoff)}
-                  />
-                </Facts>
-              </Strain>
-            ))}
+          {/* What the ranking buys a laboratory — precision and enrichment at
+              its head — is the deliverable's own argument, and `/` gives all
+              twelve figures. Repeating them here only lengthened the scroll.
+              What belongs to this beat is the one thing the hardest reading
+              produced that the rest of the pipeline then runs on. */}
+          {/* One cutoff, not three. `in_domain_tanimoto` is a single value in
+              the shortlist configuration and the same line is applied to all
+              three pathogens, so printing it once per pathogen was the same
+              number three times over. */}
+          <Panel title="The cutoff the hardest reading produced">
+            <Facts>
+              <Fact
+                label="Domain cutoff"
+                note="the 25th percentile of the plant holdout, one line applied to all three pathogens"
+                value={tanimoto(first.domainCutoff)}
+              />
+            </Facts>
           </Panel>
         </>
       );
@@ -1144,11 +1137,6 @@ function figure(id: string, ctx: Context): ReactNode {
           </Panel>
           <Panel title="What stands behind every number on both pages">
             <Facts>
-              <Fact
-                label="Commit"
-                note={`branch ${ctx.provenance.branch}`}
-                value={ctx.provenance.commit}
-              />
               <Fact
                 label="Metrics reproduced"
                 note={`${ctx.reproduction.stages.join(" and ")}, on a second machine`}
