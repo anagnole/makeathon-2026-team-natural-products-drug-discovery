@@ -1,14 +1,20 @@
 # The pitch, beat by beat
 
-Twenty beats of record mode, with what to say over each one. This is the whole
-pitch, not just the demo: question, team, problem, the screen, how it was built,
-the results, the honest part, what it is for, and who made it.
+> **This is not the submitted script.** The pitch we submitted is slides with a
+> voiceover, and its script is [`deck/narration.md`](deck/narration.md), which
+> borrows much of its wording from here. This file is the longer written account
+> the deck was distilled from, kept because it argues each beat at a length the
+> slides cannot. The record mode it was written for is no longer mounted on the
+> site, so the keys below do nothing: see `web/components/Record.tsx`.
 
-Open the app, press **R**. Then **→** for the next beat, **←** to go back, **H**
-to hide the strip for a clean frame, **Esc** to leave. Every state change on
-screen is on a key, so nothing in a take depends on finding a well with the
-mouse. Beats 08–11 cross to `/pipeline` and back on their own; the run survives
-the navigation.
+Twenty beats, with what to say over each one. The whole pitch, not just the
+demo: question, team, problem, the screen, how it was built, the results, the
+honest part, what it is for, and who made it.
+
+As written, it assumed the page drove itself: **R** to start, **→** and **←** to
+move, **H** to hide the strip, **Esc** to leave, with beats 08–11 crossing to
+`/pipeline` and back. Every state change was on a key, so nothing in a take
+depended on finding a well with the mouse.
 
 **Record at 1920×1080.** At that size the whole plate fits in frame, boundary and
 struck wells included, and the chemical-space figure lands with its key and its
